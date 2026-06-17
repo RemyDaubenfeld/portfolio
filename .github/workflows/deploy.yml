@@ -36,28 +36,38 @@ jobs:
         env:
           APP_ENV: prod
 
-      # ── 5. Nettoyage avant envoi ──────────────────────────────────────────
+      # ── 5. Setup SSH ──────────────────────────────────────────────────────
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      # ── 6. Nettoyage avant envoi ──────────────────────────────────────────
       - name: Clean up before deploy
         run: |
           rm -rf .git .github node_modules tests
           rm -f .gitignore .env.local .env.test
-          # Vider le cache local (sera regénéré côté serveur)
           rm -rf var/cache/*
+       
+      # ── 7. Build Tailwind CSS ──────────────────────────────────────────
+      - name: Build Tailwind CSS
+        run: php bin/console tailwind:build --minify
+        env:
+          APP_ENV: prod
 
-      # ── 6. Déploiement SFTP ───────────────────────────────────────────────
-      - name: Deploy via SFTP
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-        with:
-          server: ${{ secrets.SSH_HOST }}
-          port: 22
-          username: ${{ secrets.SSH_USER }}
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          local_path: ./
-          remote_path:  /home/www/portfolio/
-          sftp_only: true
-          delete_remote_files: false
+      # ── 8. Déploiement via rsync ──────────────────────────────────────────
+      - name: Deploy via rsync
+        run: |
+          rsync -az --delete \
+          --exclude='.env.local' \
+          --exclude='var/log/' \
+          --exclude='public/uploads/' \
+          -e "ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no" \
+          ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/www/portfolio/
 
-      # ── 7. Post-deploy : cache + migrations ──────────────────────────────
+      # ── 9. Post-deploy : tailwind + assets + cache + migrations ───────────
       - name: Post-deploy commands (SSH)
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -67,7 +77,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/www/portfolio
-            php bin/console tailwind:build --minify
             php bin/console asset-map:compile
             php bin/console cache:clear --env=prod --no-debug
             php bin/console cache:warmup --env=prod
