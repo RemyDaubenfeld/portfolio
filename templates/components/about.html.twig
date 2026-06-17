@@ -1,0 +1,56 @@
+{% block about %}
+<section id="about" class="px-16 py-24 border-b border-border max-md:px-6 max-md:py-16">
+    <div class="flex items-baseline gap-5 mb-14">
+        <span class="font-mono text-[0.65rem] text-gold uppercase tracking-[0.12em]">
+            01
+        </span>
+        <h2 class="font-display text-[clamp(1.5rem,2.8vw,2.1rem)] font-semibold tracking-[-0.02em]">Profil</h2>
+        <div class="flex-1 h-px bg-border max-w-[8rem]"></div>
+    </div>
+
+    <div class="grid grid-cols-[2fr_1fr] gap-20 items-start max-md:grid-cols-1 max-md:gap-10">
+        <div class="text-[1.02rem] text-text-dim leading-[1.8] font-light mb-[1.2rem]">
+            <p >
+               {{ user.bioHeadline | raw }}
+            </p>
+            <br/>
+            <p>
+                {{ user.bioBackground | raw }}
+            </p>
+            <br/>
+            <p>
+                {{ user.bioObjective | raw }}
+            </p>
+        </div>
+        <div class="about-aside">
+            <div class="bg-bg2 border border-border rounded-[10px] p-5 mb-3 transition-all duration-200 hover:bg-bg3 hover:border-gold-dim">
+                <div class="font-mono text-[0.62rem] text-text-mute uppercase tracking-[0.1em] mb-2">
+                    Situation
+                </div>
+                <div class="text-[0.88rem] text-text">
+                    {{ user.situation }}
+                </div>
+            </div>
+            <div class="bg-bg2 border border-border rounded-[10px] p-5 mb-3 transition-all duration-200 hover:bg-bg3 hover:border-gold-dim">
+                <div class="font-mono text-[0.62rem] text-text-mute uppercase tracking-[0.1em] mb-2">
+                    Disponibilité
+                </div>
+                <div class="text-[0.88rem] text-text">
+                    {{ user.contractType }} · {{ user.availability }}
+                </div>
+            </div>
+            <div class="bg-bg2 border border-border rounded-[10px] p-5 mb-3 transition-all duration-200 hover:bg-bg3 hover:border-gold-dim">
+                <div class="font-mono text-[0.62rem] text-text-mute uppercase tracking-[0.1em] mb-2">Intérêts</div>
+
+                <div class="text-[0.88rem] text-text">
+                    {% for interest in user.interests %}
+                    <span class="inline-block bg-bg3 border border-cyan-dim font-mono text-[0.65rem] text-cyan px-2 py-[0.18rem] mr-1 mt-1 tracking-[0.04em]">
+                        {{ interest }}
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

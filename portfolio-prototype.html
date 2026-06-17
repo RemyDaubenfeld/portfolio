@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="duo">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rémy Daubenfeld — Développeur Web</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ── THEME VARIABLES ── */
+  :root {
+    --bg:        #0D0F14;
+    --bg2:       #1A1D24;
+    --bg3:       #22252E;
+    --border:    #2A2D35;
+    --text:      #F0EDE6;
+    --text-dim:  #8A8780;
+    --text-mute: #4A4D55;
+    /* or seul */
+    --gold:      #C8A96E;
+    --gold-dim:  #7A5F2E;
+    /* cyan (technique) — actif seulement en thème duo */
+    --cyan:      #C8A96E;
+    --cyan-dim:  #7A5F2E;
+  }
+  [data-theme="duo"] {
+    --cyan:     #4EC9B0;
+    --cyan-dim: #1E5A4E;
+  }
+
+  /* ── SWITCHER ── */
+  .theme-switcher {
+    position: fixed; top: 76px; right: 1.5rem; z-index: 200;
+    display: flex; gap: 0; background: var(--bg2); border: 1px solid var(--border);
+  }
+  .theme-btn {
+    font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.06em;
+    text-transform: uppercase; padding: 0.4rem 0.85rem;
+    color: var(--text-mute); background: transparent; border: none; cursor: pointer;
+    transition: color 0.2s, background 0.2s;
+  }
+  .theme-btn.active { color: var(--bg); background: var(--gold); }
+
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 4rem; height: 64px;
+    background: rgba(13,15,20,0.9); backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo { display: flex; align-items: center; gap: 0.65rem; text-decoration: none; }
+  .nav-logo img { width: 30px; height: 30px; border-radius: 50%; }
+  .nav-logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; font-weight: 600; color: var(--text); }
+  .nav-logo-text span { color: var(--gold); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a { font-family: 'DM Mono', monospace; font-size: 0.73rem; color: var(--text-dim); text-decoration: none; letter-spacing: 0.06em; text-transform: uppercase; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-cta { font-family: 'DM Mono', monospace; font-size: 0.73rem; color: var(--gold); border: 1px solid var(--gold-dim); padding: 0.42rem 1rem; text-decoration: none; letter-spacing: 0.06em; text-transform: uppercase; transition: background 0.2s, color 0.2s; }
+  .nav-cta:hover { background: var(--gold); color: var(--bg); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh; display: grid; grid-template-columns: 1.1fr 0.9fr;
+    align-items: center; padding: 8rem 4rem 4rem; gap: 5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-eyebrow { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--gold); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 1.4rem; display: flex; align-items: center; gap: 0.75rem; }
+  .hero-eyebrow::before { content: ''; width: 2rem; height: 1px; background: var(--gold); }
+  .hero-name { font-family: 'Space Grotesk', sans-serif; font-size: clamp(2.8rem, 5vw, 4.4rem); font-weight: 700; line-height: 1.04; letter-spacing: -0.025em; margin-bottom: 0.5rem; }
+  .hero-title-line { font-family: 'DM Mono', monospace; font-size: clamp(0.85rem, 1.4vw, 1rem); color: var(--cyan); margin-bottom: 2rem; min-height: 1.6em; }
+  .cursor { display: inline-block; width: 2px; height: 1em; background: var(--cyan); margin-left: 2px; vertical-align: text-bottom; animation: blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .hero-desc { font-size: 0.98rem; color: var(--text-dim); max-width: 44ch; line-height: 1.75; margin-bottom: 2.5rem; font-weight: 300; }
+  .hero-desc strong { color: var(--text); font-weight: 500; }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary { font-family: 'DM Mono', monospace; font-size: 0.76rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--bg); background: var(--gold); border: 1px solid var(--gold); padding: 0.72rem 1.6rem; text-decoration: none; transition: opacity 0.2s; }
+  .btn-primary:hover { opacity: 0.82; }
+  .btn-ghost { font-family: 'DM Mono', monospace; font-size: 0.76rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-dim); background: transparent; border: 1px solid var(--border); padding: 0.72rem 1.6rem; text-decoration: none; transition: border-color 0.2s, color 0.2s; }
+  .btn-ghost:hover { border-color: var(--text-dim); color: var(--text); }
+
+  .hero-right { display: flex; flex-direction: column; align-items: center; gap: 2.5rem; }
+
+  .hero-photo-wrap { position: relative; width: 180px; height: 180px; flex-shrink: 0; }
+  .hero-photo-wrap::before { content: ''; position: absolute; inset: -7px; border: 1px solid var(--gold-dim); border-radius: 50%; opacity: 0.6; }
+  .hero-photo-wrap::after { content: ''; position: absolute; inset: -14px; border: 1px solid var(--border); border-radius: 50%; }
+  .hero-photo-placeholder { width: 180px; height: 180px; border-radius: 50%; background: var(--bg2); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; color: var(--text-mute); }
+
+  .hero-stat-grid { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; }
+  .stat-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 1.4rem 1.25rem;
+    display: flex; flex-direction: column; gap: 0.4rem;
+    transition: border-color 0.2s, background 0.15s;
+  }
+  .stat-card:hover { background: var(--bg3); border-color: var(--gold-dim); }
+  .stat-card-value {
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.9rem; font-weight: 700;
+    color: var(--gold); line-height: 1;
+  }
+  .stat-card-label {
+    font-family: 'DM Mono', monospace; font-size: 0.62rem;
+    color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .stat-card-sub { font-size: 0.78rem; color: var(--text-dim); font-weight: 300; margin-top: 0.15rem; line-height: 1.4; }
+
+  /* ── SECTIONS ── */
+  section { padding: 6rem 4rem; border-bottom: 1px solid var(--border); }
+  .section-header { display: flex; align-items: baseline; gap: 1.25rem; margin-bottom: 3.5rem; }
+  .section-tag { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.12em; }
+  .section-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.5rem, 2.8vw, 2.1rem); font-weight: 600; letter-spacing: -0.02em; }
+  .section-rule { flex: 1; height: 1px; background: var(--border); max-width: 8rem; }
+
+  /* ── ABOUT ── */
+  .about-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 5rem; align-items: start; }
+  .about-text p { font-size: 1.02rem; color: var(--text-dim); line-height: 1.8; font-weight: 300; margin-bottom: 1.2rem; }
+  .about-text p strong { color: var(--text); font-weight: 500; }
+  .aside-block { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; margin-bottom: 0.75rem; transition: border-color 0.2s, background 0.15s; }
+  .aside-block:hover { background: var(--bg3); border-color: var(--gold-dim); }
+  .aside-block-label { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+  .aside-block-value { font-size: 0.88rem; color: var(--text); }
+  .tag { display: inline-block; background: var(--bg3); border: 1px solid var(--cyan-dim); font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--cyan); padding: 0.18rem 0.5rem; margin: 0.2rem 0.2rem 0 0; letter-spacing: 0.04em; }
+
+  /* ── SKILLS — icon cards ── */
+  .skills-domains { display: flex; flex-direction: column; gap: 3rem; }
+  .skill-domain-title {
+    font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--gold);
+    text-transform: uppercase; letter-spacing: 0.12em;
+    margin-bottom: 1.25rem; padding-bottom: 0.65rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .skill-domain-title::before { content: ''; width: 1.25rem; height: 1px; background: var(--gold); }
+  .skill-cards { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  .skill-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 0.85rem 1rem;
+    display: flex; flex-direction: column; align-items: center; gap: 0.55rem;
+    width: 80px; transition: border-color 0.2s, background 0.2s; cursor: default;
+  }
+  .skill-card:hover { background: var(--bg3); border-color: var(--cyan-dim); }
+  .skill-card img { width: 32px; height: 32px; object-fit: contain; filter: brightness(0.85); transition: filter 0.2s; }
+  .skill-card:hover img { filter: brightness(1.1); }
+  .skill-card-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--text-dim); text-align: center; letter-spacing: 0.03em; line-height: 1.3; }
+  .skill-card.main .skill-card-label { color: var(--text); }
+
+  /* ── PROJECTS — cards en colonne ── */
+  .projects-list { display: flex; flex-direction: column; gap: 1.25rem; }
+  .project-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 1.75rem 2rem;
+    display: grid; grid-template-columns: 1fr auto;
+    gap: 1.5rem; align-items: start;
+    text-decoration: none; color: inherit;
+    transition: background 0.15s, border-color 0.2s;
+  }
+  .project-card:hover { background: var(--bg3); border-color: var(--gold-dim); }
+  .project-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.65rem; }
+  .project-index { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--text-mute); }
+  .project-name { font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 600; }
+  .project-desc { font-size: 0.88rem; color: var(--text-dim); font-weight: 300; line-height: 1.7; margin-bottom: 1.1rem; }
+  .project-stack { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .stack-tag { font-family: 'DM Mono', monospace; font-size: 0.63rem; color: var(--text-mute); border: 1px solid var(--border); border-radius: 4px; padding: 0.15rem 0.5rem; letter-spacing: 0.04em; transition: color 0.15s, border-color 0.15s; }
+  .project-card:hover .stack-tag { color: var(--cyan); border-color: var(--cyan-dim); }
+  .project-arrow { font-size: 1.1rem; color: var(--text-mute); transition: color 0.2s, transform 0.2s; margin-top: 0.2rem; }
+  .project-card:hover .project-arrow { color: var(--gold); transform: translate(3px,-3px); }
+
+  /* ── CONTACT ── */
+  #contact { border-bottom: none; }
+  .contact-inner { max-width: 38rem; }
+  .contact-eyebrow { font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem; }
+  .contact-eyebrow::before { content: ''; width: 2rem; height: 1px; background: var(--gold); }
+  .contact-heading { font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 1.2rem; }
+  .contact-sub { font-size: 0.95rem; color: var(--text-dim); font-weight: 300; margin-bottom: 2.5rem; line-height: 1.75; }
+  .contact-links { display: flex; flex-direction: column; gap: 0.7rem; }
+  .contact-link { display: flex; align-items: center; gap: 1rem; font-family: 'DM Mono', monospace; font-size: 0.8rem; color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
+  .contact-link:hover { color: var(--gold); }
+  .contact-link-icon { width: 1.4rem; color: var(--text-mute); font-style: normal; }
+
+  /* ── FOOTER ── */
+  footer { padding: 1.75rem 4rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); }
+  .footer-copy, .footer-made { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--text-mute); letter-spacing: 0.04em; }
+  .footer-made .accent { color: var(--gold); }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); }
+
+  @media (max-width: 960px) {
+    nav { padding: 0 1.5rem; }
+    .nav-links { display: none; }
+    #hero { grid-template-columns: 1fr; padding: 6rem 1.5rem 3rem; gap: 3rem; }
+    section { padding: 4rem 1.5rem; }
+    .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .project-card { grid-template-columns: 1fr; }
+    footer { padding: 1.5rem; flex-direction: column; gap: 0.5rem; text-align: center; }
+    .theme-switcher { top: auto; bottom: 1.5rem; right: 1.5rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { .cursor { animation: none; opacity: 1; } }
+</style>
+</head>
+<body>
+
+<!-- Switcher couleur -->
+<div class="theme-switcher">
+  <button class="theme-btn" data-t="gold" onclick="setTheme('gold')">Or seul</button>
+  <button class="theme-btn active" data-t="duo" onclick="setTheme('duo')">Or + Cyan</button>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">
+    <img src="https://remy-daubenfeld.fr/assets/img/portfolio/logo.webp" alt="Logo RD">
+    <span class="nav-logo-text">Rémy<span> Daubenfeld</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#about">Profil</a></li>
+    <li><a href="#skills">Stack</a></li>
+    <li><a href="#projects">Projets</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Disponible sept. 2026</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">Développeur Web</p>
+    <h1 class="hero-name">Rémy<br>Daubenfeld</h1>
+    <p class="hero-title-line" id="typing-line"><span class="cursor"></span></p>
+    <p class="hero-desc">
+      Back-end <strong>Symfony / PHP</strong>, outillage <strong>IA locale</strong>, automatisation.
+      Je construis des applications solides — et des outils que j'utilise vraiment.
+    </p>
+    <div class="hero-actions">
+      <a href="#projects" class="btn-primary">Voir les projets</a>
+      <a href="#" class="btn-ghost">Télécharger le CV</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-photo-wrap">
+      <div class="hero-photo-placeholder">RD</div>
+    </div>
+    <div class="hero-stat-grid">
+      <div class="stat-card">
+        <span class="stat-card-value">2+</span>
+        <span class="stat-card-label">Ans de formation</span>
+        <span class="stat-card-sub">Metz Numéric School — DWWM &amp; CDA</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-card-value">CDI</span>
+        <span class="stat-card-label">Recherché</span>
+        <span class="stat-card-sub">Disponible dès septembre 2026</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-card-value">6</span>
+        <span class="stat-card-label">Serveurs MCP</span>
+        <span class="stat-card-sub">Stack IA locale 100% maison</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-card-value">Back</span>
+        <span class="stat-card-label">Spécialité</span>
+        <span class="stat-card-sub">Symfony · PHP · Python · API REST</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-header">
+    <span class="section-tag">01</span>
+    <h2 class="section-title">Profil</h2>
+    <div class="section-rule"></div>
+  </div>
+  <div class="about-grid">
+    <div class="about-text">
+      <p>Avant le développement, <strong>10 ans dans l'animation jeunesse</strong> — un métier où l'organisation, la communication et l'adaptation sont des réflexes, pas des cases à cocher sur un CV.</p>
+      <p>La reconversion a confirmé quelque chose : j'apprends vite et je ne m'arrête pas au cours. Aujourd'hui en stage chez <strong>VPDive</strong> sur un projet Symfony en production, je construis en parallèle des outils locaux — serveurs MCP, routeur LLM, benchmark de modèles — parce que comprendre en profondeur est plus utile qu'utiliser en surface.</p>
+      <p>Ce que je cherche : une équipe sur des projets concrets, où je peux continuer à progresser vite.</p>
+    </div>
+    <div class="about-aside">
+      <div class="aside-block">
+        <div class="aside-block-label">Situation</div>
+        <div class="aside-block-value">Stage chez VPDive · Metz</div>
+      </div>
+      <div class="aside-block">
+        <div class="aside-block-label">Disponibilité</div>
+        <div class="aside-block-value">CDI · septembre 2026</div>
+      </div>
+      <div class="aside-block">
+        <div class="aside-block-label">Intérêts</div>
+        <div class="aside-block-value">
+          <span class="tag">IA locale</span>
+          <span class="tag">DevOps</span>
+          <span class="tag">Open source</span>
+          <span class="tag">Linux</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-header">
+    <span class="section-tag">02</span>
+    <h2 class="section-title">Stack technique</h2>
+    <div class="section-rule"></div>
+  </div>
+  <div class="skills-domains">
+
+    <div>
+      <div class="skill-domain-title">Back-end</div>
+      <div class="skill-cards">
+        <div class="skill-card main">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/symfony/symfony-original.svg" alt="Symfony">
+          <span class="skill-card-label">Symfony</span>
+        </div>
+        <div class="skill-card main">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg" alt="PHP">
+          <span class="skill-card-label">PHP</span>
+        </div>
+        <div class="skill-card main">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python">
+          <span class="skill-card-label">Python</span>
+        </div>
+        <div class="skill-card">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg" alt="FastAPI">
+          <span class="skill-card-label">FastAPI</span>
+        </div>
+        <div class="skill-card">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js">
+          <span class="skill-card-label">Node.js</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="skill-domain-title">Front-end</div>
+      <div class="skill-cards">
+        <div class="skill-card main">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML5">
+          <span class="skill-card-label">HTML</span>
+        </div>
+        <div class="skill-card main">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS3">
+          <span class="skill-card-label">CSS</span>
+        </div>
+        <div class="skill-card main">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript">
+          <span class="skill-card-label">JavaScript</span>
+        </div>
+        <div class="skill-card">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" alt="Tailwind">
+          <span class="skill-card-label">Tailwind</span>
+        </div>
+        <div class="skill-card">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bootstrap/bootstrap-original.svg" alt="Bootstrap">
+          <span class="skill-card-label">Bootstrap</span>
+        </div>
+        <div class="skill-card">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/angularjs/angularjs-original.svg" alt="Angular">
+          <span class="skill-card-label">Angular</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="skill-domain-title">Data &amp; DevOps</div>
+      <div class="skill-cards">
+        <div class="skill-card main">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="MySQL">
+          <span class="skill-card-label">MySQL</span>
+        </div>
+        <div class="skill-card main">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" alt="Docker">
+          <span class="skill-card-label">Docker</span>
+        </div>
+        <div class="skill-card main">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" style="filter:invert(0.8)">
+          <span class="skill-card-label">GitHub Actions</span>
+        </div>
+        <div class="skill-card">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sqlite/sqlite-original.svg" alt="SQLite">
+          <span class="skill-card-label">SQLite</span>
+        </div>
+        <div class="skill-card">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg" alt="Linux">
+          <span class="skill-card-label">Linux</span>
+        </div>
+        <div class="skill-card">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nginx/nginx-original.svg" alt="Nginx">
+          <span class="skill-card-label">Nginx</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="skill-domain-title">IA &amp; Outillage</div>
+      <div class="skill-cards">
+        <div class="skill-card main">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ollama/ollama-original.svg" alt="Ollama" onerror="this.src='https://ollama.com/public/ollama.png'">
+          <span class="skill-card-label">Ollama</span>
+        </div>
+        <div class="skill-card main">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg" alt="VS Code">
+          <span class="skill-card-label">VS Code</span>
+        </div>
+        <div class="skill-card">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg" alt="Figma">
+          <span class="skill-card-label">Figma</span>
+        </div>
+        <div class="skill-card">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" alt="Git">
+          <span class="skill-card-label">Git</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-header">
+    <span class="section-tag">03</span>
+    <h2 class="section-title">Projets</h2>
+    <div class="section-rule"></div>
+  </div>
+  <div class="projects-list">
+
+    <a href="#" class="project-card">
+      <div>
+        <div class="project-header">
+          <span class="project-index">01</span>
+          <span class="project-name">LLM Router</span>
+        </div>
+        <div class="project-desc">API de routage sémantique vers les modèles Ollama locaux. Analyse chaque prompt par similarité cosinus et sélectionne automatiquement le meilleur modèle sans intervention manuelle. Compatible API OpenAI — fonctionne avec Open WebUI, Continue, tout client OpenAI.</div>
+        <div class="project-stack">
+          <span class="stack-tag">Python</span>
+          <span class="stack-tag">FastAPI</span>
+          <span class="stack-tag">Ollama</span>
+          <span class="stack-tag">Docker</span>
+          <span class="stack-tag">GPU NVIDIA</span>
+        </div>
+      </div>
+      <span class="project-arrow">↗</span>
+    </a>
+
+    <a href="#" class="project-card">
+      <div>
+        <div class="project-header">
+          <span class="project-index">02</span>
+          <span class="project-name">Stream &amp; Play</span>
+        </div>
+        <div class="project-desc">Application fullstack SPA — streaming de contenus multimédias et émulation de jeux dans le navigateur. API REST sécurisée avec authentification JWT, architecture découplée front/back.</div>
+        <div class="project-stack">
+          <span class="stack-tag">Symfony</span>
+          <span class="stack-tag">Angular</span>
+          <span class="stack-tag">JWT</span>
+          <span class="stack-tag">MySQL</span>
+          <span class="stack-tag">Tailwind</span>
+        </div>
+      </div>
+      <span class="project-arrow">↗</span>
+    </a>
+
+    <a href="#" class="project-card">
+      <div>
+        <div class="project-header">
+          <span class="project-index">03</span>
+          <span class="project-name">MCP Servers ×6</span>
+        </div>
+        <div class="project-desc">Suite de 6 serveurs MCP maison — Whisper (transcription), Symfony Console, TCGDex, File Manager, Vision, Git Advanced. Intégrés dans opencode et VS Code pour un workflow IA 100% local sans dépendances tierces.</div>
+        <div class="project-stack">
+          <span class="stack-tag">Python</span>
+          <span class="stack-tag">MCP</span>
+          <span class="stack-tag">Ollama</span>
+          <span class="stack-tag">Symfony</span>
+          <span class="stack-tag">opencode</span>
+        </div>
+      </div>
+      <span class="project-arrow">↗</span>
+    </a>
+
+    <a href="#" class="project-card">
+      <div>
+        <div class="project-header">
+          <span class="project-index">04</span>
+          <span class="project-name">Web SEO Toolkit</span>
+        </div>
+        <div class="project-desc">Outil desktop multiplateforme pour auditer le SEO d'un site, convertir des pages HTML en Markdown propre et générer des sitemaps XML. Traitement 100% local, aucune dépendance cloud.</div>
+        <div class="project-stack">
+          <span class="stack-tag">Python</span>
+          <span class="stack-tag">Tkinter</span>
+          <span class="stack-tag">BeautifulSoup</span>
+          <span class="stack-tag">Windows</span>
+          <span class="stack-tag">Linux</span>
+        </div>
+      </div>
+      <span class="project-arrow">↗</span>
+    </a>
+
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <p class="contact-eyebrow">Contact</p>
+    <h2 class="contact-heading">Parlons d'un projet.</h2>
+    <p class="contact-sub">Disponible pour un CDI à partir de septembre 2026. Basé à Moulins-lès-Metz, ouvert aux missions remote.</p>
+    <div class="contact-links">
+      <a href="mailto:contact@remy-daubenfeld.fr" class="contact-link">
+        <i class="contact-link-icon">✉</i> contact@remy-daubenfeld.fr
+      </a>
+      <a href="https://linkedin.com/in/remydaubenfeld" class="contact-link" target="_blank">
+        <i class="contact-link-icon">in</i> linkedin.com/in/remydaubenfeld
+      </a>
+      <a href="https://github.com/RemyDaubenfeld" class="contact-link" target="_blank">
+        <i class="contact-link-icon">gh</i> github.com/RemyDaubenfeld
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-copy">© 2026 Rémy Daubenfeld</span>
+  <span class="footer-made">fait avec <span class="accent">Symfony</span> · Metz</span>
+</footer>
+
+<script>
+  function setTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.toggle('active', b.dataset.t === t));
+  }
+
+  const phrases = ['Développeur back-end · Symfony / PHP', 'Outillage IA · MCP · Ollama', 'Stage VPDive · CDI sept. 2026'];
+  let pi = 0, ci = 0, del = false;
+  const el = document.getElementById('typing-line');
+  function tick() {
+    const p = phrases[pi];
+    if (!del) {
+      el.innerHTML = p.slice(0, ci+1) + '<span class="cursor"></span>'; ci++;
+      if (ci === p.length) { del = true; setTimeout(tick, 2400); return; }
+    } else {
+      el.innerHTML = p.slice(0, ci-1) + '<span class="cursor"></span>'; ci--;
+      if (ci === 0) { del = false; pi = (pi+1) % phrases.length; }
+    }
+    setTimeout(tick, del ? 36 : 70);
+  }
+  setTimeout(tick, 700);
+
+  const obs = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) e.target.style.opacity = 1; }), { threshold: 0.06 });
+  document.querySelectorAll('section').forEach(s => { s.style.opacity = 0; s.style.transition = 'opacity 0.55s ease'; obs.observe(s); });
+</script>
+</body>
+</html>

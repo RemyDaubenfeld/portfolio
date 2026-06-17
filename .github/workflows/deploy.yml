@@ -1,0 +1,74 @@
+name: Deploy to IONOS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Récupération du code ──────────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ── 2. Setup PHP ─────────────────────────────────────────────────────
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: intl, pdo, pdo_mysql, zip, opcache
+          coverage: none
+
+      # ── 3. Cache Composer ─────────────────────────────────────────────────
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor/
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      # ── 4. Install PHP dependencies (prod only) ───────────────────────────
+      - name: Composer install (prod)
+        run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+        env:
+          APP_ENV: prod
+
+      # ── 5. Nettoyage avant envoi ──────────────────────────────────────────
+      - name: Clean up before deploy
+        run: |
+          rm -rf .git .github node_modules tests
+          rm -f .gitignore .env.local .env.test
+          # Vider le cache local (sera regénéré côté serveur)
+          rm -rf var/cache/*
+
+      # ── 6. Déploiement SFTP ───────────────────────────────────────────────
+      - name: Deploy via SFTP
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          server: ${{ secrets.SSH_HOST }}
+          port: 22
+          username: ${{ secrets.SSH_USER }}
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          local_path: ./
+          remote_path:  /home/www/portfolio/
+          sftp_only: true
+          delete_remote_files: false
+
+      # ── 7. Post-deploy : cache + migrations ──────────────────────────────
+      - name: Post-deploy commands (SSH)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: 22
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/www/portfolio
+            php bin/console tailwind:build --minify
+            php bin/console asset-map:compile
+            php bin/console cache:clear --env=prod --no-debug
+            php bin/console cache:warmup --env=prod
+            php bin/console doctrine:migrations:migrate --no-interaction --env=prod

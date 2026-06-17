@@ -1,0 +1,52 @@
+{% block hero %}
+<section id="hero" class="min-h-screen grid grid-cols-[1.1fr_0.9fr] items-center pt-32 px-16 pb-16 gap-20 border-b border-border max-md:grid-cols-1 max-md:px-6 max-md:pt-24 max-md:gap-12">
+    <!--Hero left-->
+    <div class="hero-left">
+        <p class="eyebrow-line font-mono text-[0.7rem] text-gold tracking-[0.14em] uppercase mb-[1.4rem] flex items-center gap-3">
+            Développeur Web
+        </p>
+        <h1 class="font-display text-[clamp(2.8rem,5vw,4.4rem)] font-bold leading-[1.04] tracking-[-0.025em] mb-2">
+            Rémy<br>Daubenfeld
+        </h1>
+        <p class="font-mono text-[clamp(0.85rem,1.4vw,1rem)] text-cyan mb-8 min-h-[1.6em]" id="typing-line" data-phrases="{{ hero_typing|map(t => t.phrase)|json_encode }}">
+            <span class="cursor"></span>
+        </p>
+        
+        <p class="text-[0.98rem] text-text-dim max-w-[44ch] leading-[1.75] mb-10 font-light">
+            {{ user.heroTagline|raw }}
+        </p>
+        <div class="flex gap-4 flex-wrap">
+            <a href="#projects" class="font-mono text-[0.76rem] tracking-[0.07em] uppercase text-bg bg-gold border border-gold px-[1.6rem] py-[0.72rem] no-underline transition-opacity duration-200 hover:opacity-80">
+                Voir les projets
+            </a>
+            <a href="{{ vich_uploader_asset(user, 'cvFileFile') }}" download="CV de {{ user.firstName}} {{ user.lastName}}" class="font-mono text-[0.76rem] tracking-[0.07em] uppercase text-text-dim bg-transparent border border-border px-[1.6rem] py-[0.72rem] no-underline transition-all duration-200 hover:border-text-dim hover:text-text">
+                Télécharger le CV
+            </a>
+        </div>
+    </div>
+    <!--Hero right-->
+    <div class="flex flex-col items-center gap-10">
+        <div class="photo-rings relative w-[180px] h-[180px] shrink-0">
+            <div >
+                <img src="{{ vich_uploader_asset(user, 'photoFileFile') }}" class="w-[180px] h-[180px] rounded-full bg-bg2 border-2 border-border flex items-center justify-center font-display text-[2.2rem] font-bold text-text-mute" alt="Photo de Rémy Daubenfeld">
+            </div>
+        </div>
+        
+        <div class="w-full grid grid-cols-2 gap-[0.65rem]">
+            {% for heroStat in hero_stats %}
+            <div class="bg-bg2 border border-border rounded-[10px] px-5 py-[1.4rem] flex flex-col gap-[0.4rem] transition-all duration-200 hover:bg-bg3 hover:border-gold-dim">
+                <span class="font-display text-[1.9rem] font-bold text-gold leading-none">
+                    {{ heroStat.value }}
+                </span>
+                <span class="font-mono text-[0.62rem] text-text-mute uppercase tracking-[0.08em]">
+                    {{ heroStat.label }}
+                </span>
+                <span class="text-[0.78rem] text-text-dim font-light mt-[0.15rem] leading-[1.4]">
+                    {{ heroStat.sub }}
+                </span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

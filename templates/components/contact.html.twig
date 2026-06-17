@@ -1,0 +1,37 @@
+{% block contact %}
+    <section id="contact" class="px-16 py-24 max-md:px-6 max-md:py-16">
+        <div >
+
+            <p class="eyebrow-line font-mono text-[0.68rem] text-gold uppercase tracking-[0.12em] mb-4 flex items-center gap-3">
+                Contact
+            </p>
+
+            <h2 class="font-display text-[clamp(1.8rem,3.5vw,2.6rem)] font-bold tracking-[-0.02em] leading-[1.1] mb-[1.2rem]">
+                Parlons d'un projet.
+            </h2>
+
+            <p class="text-[0.95rem] text-text-dim font-light mb-10 leading-[1.75]">
+                {{ user.contactTagline }}
+            </p>
+
+            <div class="flex flex-col gap-[0.7rem]">
+                <a href="mailto:{{ user.email }}" class="flex items-center gap-4 font-mono text-[0.8rem] text-text-dim no-underline transition-colors duration-200 hover:text-gold">
+                    <img src="{{ asset('assets/img/mail.webp') }}" alt="Mail" class="w-[1.4rem] text-text-mute not-italic"/>
+                    {{ user.email }}
+                </a>
+                {% if user.linkedinUrl %}
+                <a href="{{ user.linkedinUrl }}" target="_blank" class="flex items-center gap-4 font-mono text-[0.8rem] text-text-dim no-underline transition-colors duration-200 hover:text-gold">
+                    <img src="{{ asset('assets/img/linkedin.webp') }}" alt="Linkedin" class="w-[1.4rem] text-text-mute not-italic"/>
+                    {{ user.linkedinUrl|replace({'https://www.': '', 'https://': ''}) }}
+                </a>
+                {% endif %}
+                {% if user.githubUrl %}
+                <a href="{{ user.githubUrl }}" target="_blank" class="flex items-center gap-4 font-mono text-[0.8rem] text-text-dim no-underline transition-colors duration-200 hover:text-gold">
+                    <img src="{{ asset('assets/img/github.webp') }}" alt="Github" class="w-[1.4rem] text-text-mute not-italic"/>
+                    {{ user.githubUrl|replace({'https://www.': '', 'https://': ''}) }}
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

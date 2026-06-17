@@ -1,3 +1,86 @@
-body {
-    background-color: skyblue;
+@import "tailwindcss";
+
+@theme {
+  /* Couleurs */
+  --color-bg:        #0D0F14;
+  --color-bg2:       #1A1D24;
+  --color-bg3:       #22252E;
+  --color-border:    #2A2D35;
+  --color-text:      #F0EDE6;
+  --color-text-dim:  #8A8780;
+  --color-text-mute: #4A4D55;
+  --color-gold:      #C8A96E;
+  --color-gold-dim:  #7A5F2E;
+  --color-cyan:      #4EC9B0;
+  --color-cyan-dim:  #1E5A4E;
+
+  /* Polices */
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+  --font-mono:    'DM Mono', monospace;
 }
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Curseur clignotant */
+.cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: var(--color-cyan);
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .cursor { animation: none; opacity: 1; } }
+
+/* Eyebrow ::before (trait or à gauche) */
+.eyebrow-line::before {
+  content: '';
+  display: block;
+  width: 2rem;
+  height: 1px;
+  background: var(--color-gold);
+}
+
+/* Skill domain title ::before */
+.skill-domain-before::before {
+  content: '';
+  width: 1.25rem;
+  height: 1px;
+  background: var(--color-gold);
+}
+
+/* Photo ::before et ::after (anneaux) */
+.photo-rings::before {
+  content: '';
+  position: absolute;
+  inset: -7px;
+  border: 1px solid var(--color-gold-dim);
+  border-radius: 50%;
+  opacity: 0.6;
+}
+.photo-rings::after {
+  content: '';
+  position: absolute;
+  inset: -14px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--color-bg); }
+::-webkit-scrollbar-thumb { background: var(--color-border); }

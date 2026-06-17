@@ -1,0 +1,58 @@
+{# templates/admin/login.html.twig #}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin — Connexion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+    {% block importmap %}{{ importmap('app') }}{% endblock %}
+</head>
+<body class="min-h-screen grid place-items-center bg-bg text-text">
+
+    <div class="bg-bg2 border border-border rounded-[12px] p-10 w-[min(100%,380px)]">
+
+        <h1 class="font-display text-[1.1rem] font-semibold text-text mb-6 flex items-center gap-2">
+            🔒 Portfolio Admin
+        </h1>
+
+        {% if error %}
+        <div class="bg-red-950 border border-red-800 text-red-300 text-[0.875rem] px-3 py-[0.6rem] rounded-md mb-5">
+            {{ error.messageKey|trans(error.messageData, 'security') }}
+        </div>
+        {% endif %}
+
+        <form method="post" class="flex flex-col gap-4">
+
+            <div>
+                <label for="email" class="font-mono text-[0.75rem] text-text-mute uppercase tracking-[0.08em] block mb-[0.4rem]">
+                    Email
+                </label>
+                <input type="email" id="email" name="_username" value="{{ last_username }}"
+                       autocomplete="email" autofocus
+                       class="w-full px-3 py-[0.6rem] bg-bg border border-border rounded-md text-text text-[0.95rem] transition-all duration-200 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold">
+            </div>
+
+            <div>
+                <label for="password" class="font-mono text-[0.75rem] text-text-mute uppercase tracking-[0.08em] block mb-[0.4rem]">
+                    Mot de passe
+                </label>
+                <input type="password" id="password" name="_password"
+                       autocomplete="current-password"
+                       class="w-full px-3 py-[0.6rem] bg-bg border border-border rounded-md text-text text-[0.95rem] transition-all duration-200 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold">
+            </div>
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+            <button type="submit"
+                    class="w-full font-mono text-[0.8rem] tracking-[0.06em] uppercase text-bg bg-gold border border-gold py-[0.75rem] rounded-md font-semibold transition-opacity duration-200 hover:opacity-85 mt-2">
+                Se connecter
+            </button>
+
+        </form>
+
+    </div>
+
+</body>
+</html>
