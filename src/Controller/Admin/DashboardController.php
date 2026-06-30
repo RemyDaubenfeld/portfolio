@@ -2,8 +2,12 @@
 
 namespace App\Controller\Admin;
 
+use App\Controller\Admin\EducationCrudController;
+use App\Controller\Admin\ExperienceCrudController;
 use App\Controller\Admin\HeroStatCrudController;
 use App\Controller\Admin\HeroTypingCrudController;
+use App\Controller\Admin\InterestCrudController;
+use App\Controller\Admin\LanguageCrudController;
 use App\Controller\Admin\LegalCrudController;
 use App\Controller\Admin\ProjectCrudController;
 use App\Controller\Admin\SettingCrudController;
@@ -38,6 +42,12 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Contenu');
         yield MenuItem::linkTo(UserCrudController::class, 'Profil', 'fa fa-user');
         yield MenuItem::linkTo(ProjectCrudController::class, 'Projets', 'fa fa-code');
+
+        yield MenuItem::section('CV');
+        yield MenuItem::linkTo(ExperienceCrudController::class, 'Expériences', 'fa fa-briefcase');
+        yield MenuItem::linkTo(EducationCrudController::class, 'Formations & Diplômes', 'fa fa-graduation-cap');
+        yield MenuItem::linkTo(LanguageCrudController::class, 'Langues', 'fa fa-language');
+        yield MenuItem::linkTo(InterestCrudController::class, "Centres d'intérêt", 'fa fa-heart');
 
         yield MenuItem::section('Skills');
         yield MenuItem::linkTo(SkillCategoryCrudController::class, 'Catégories', 'fa fa-folder');

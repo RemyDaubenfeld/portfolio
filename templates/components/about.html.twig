@@ -43,9 +43,9 @@
                 <div class="font-mono text-[0.62rem] text-text-mute uppercase tracking-[0.1em] mb-2">Intérêts</div>
 
                 <div class="text-[0.88rem] text-text">
-                    {% for interest in user.interests %}
+                    {% for interest in interests %}
                     <span class="inline-block bg-bg3 border border-cyan-dim font-mono text-[0.65rem] text-cyan px-2 py-[0.18rem] mr-1 mt-1 tracking-[0.04em]">
-                        {{ interest }}
+                        {{ interest.name }}
                     </span>
                     {% endfor %}
                 </div>

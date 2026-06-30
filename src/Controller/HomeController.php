@@ -10,6 +10,7 @@ use App\Repository\HeroStatRepository;
 use App\Repository\SkillCategoryRepository;
 use App\Repository\ProjectRepository;
 use App\Repository\HeroTypingRepository;
+use App\Repository\InterestRepository;
 
 final class HomeController extends AbstractController
 {
@@ -19,7 +20,8 @@ final class HomeController extends AbstractController
         HeroStatRepository $heroStatRepo, 
         SkillCategoryRepository $skillCatRepo, 
         ProjectRepository $projectRepo,
-        HeroTypingRepository $heroTypingRepo
+        HeroTypingRepository $heroTypingRepo,
+        InterestRepository $interestRepo,
         ): Response
     {
         return $this->render('home/index.html.twig', [
@@ -28,6 +30,7 @@ final class HomeController extends AbstractController
             'skills_cats'  => $skillCatRepo->findBy([], ['sortOrder' => 'ASC']),
             'projects'   => $projectRepo->findBy([], ['sortOrder' => 'ASC']),
             'hero_typing'  => $heroTypingRepo->findBy([], ['sortOrder' => 'ASC']),
+            'interests'   => $interestRepo->findForPortfolio(),
         ]);
     }
 }

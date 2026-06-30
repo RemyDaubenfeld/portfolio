@@ -40,6 +40,9 @@ class User
     #[ORM\Column(name: "bio_objective", type: Types::TEXT, nullable: true)]
     private ?string $bioObjective = null;
 
+    #[ORM\Column(name: "cv_summary", type: Types::TEXT, nullable: true)]
+    private ?string $cvSummary = null;
+
     #[ORM\Column(name: "availability", type: Types::TEXT, nullable: true)]
     private ?string $availability = null;
 
@@ -48,9 +51,6 @@ class User
 
     #[ORM\Column(name: "situation", length: 255, nullable: true)]
     private ?string $situation = null;
-
-    #[ORM\Column(name: "interests", type: Types::JSON, nullable: true)]
-    private ?array $interests = null;
 
     #[Assert\Email(message: 'Adresse email invalide.')]
     #[ORM\Column(name: "email", length: 180, options: ["default" => 'contact@remy-daubenfeld.fr'])]
@@ -74,7 +74,6 @@ class User
     #[ORM\Column(name: "website_url", length: 255, nullable: true, options: ["default" => 'https://remy-daubenfeld.fr'])]
     private ?string $websiteUrl = 'https://remy-daubenfeld.fr';
 
-    
     #[ORM\Column(name: "photo_file", length: 255, nullable: true, options: ["default" => ''])]
     private ?string $photoFile = '';
 
@@ -82,80 +81,240 @@ class User
     #[Vich\UploadableField(mapping: 'media', fileNameProperty: 'photoFile')]
     private ?File $photoFileFile = null;
 
-    // Chemin stocké en base (ex: CV_DAUBENFELD_Rémy.pdf)
-    #[ORM\Column(name: "cv_file", length: 255, nullable: true, options: ["default" => 'CV_DAUBENFELD_Rémy.pdf'])]
-    private ?string $cvFile = 'CV_DAUBENFELD_Rémy.pdf';
-
-    #[Assert\File(maxSize: '10M', mimeTypes: ['application/pdf'], mimeTypesMessage: 'Le CV doit être un fichier PDF.')]
-    #[Vich\UploadableField(mapping: 'documents', fileNameProperty: 'cvFile')]
-    private ?File $cvFileFile = null;
-
     #[ORM\Column(name: "contact_tagline", type: Types::TEXT, nullable: true)]
     private ?string $contactTagline = null;
+
+    #[ORM\Column(name: "birth_date", length: 20, nullable: true)]
+    private ?string $birthDate = null;
+
+    #[ORM\Column(name: "driving_license", type: Types::BOOLEAN, nullable: true, options: ["default" => false])]
+    private ?bool $drivingLicense = false;
+
+    #[ORM\Column(name: "vehicle", type: Types::BOOLEAN, nullable: true, options: ["default" => false])]
+    private ?bool $vehicle = false;
 
     #[ORM\Column(name: "updated_at", type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $updatedAt = null;
 
-    public function getId(): ?int { return $this->id; }
+    public function getId(): ?int 
+    { 
+        return $this->id; 
+    }
 
-    public function getFirstName(): ?string { return $this->firstName; }
-    public function setFirstName(string $firstName): static { $this->firstName = $firstName; return $this; }
+    public function getFirstName(): ?string 
+    { 
+        return $this->firstName; 
+    }
+    
+    public function setFirstName(string $firstName): static 
+    { 
+        $this->firstName = $firstName; 
+        return $this; 
+    }
 
-    public function getLastName(): ?string { return $this->lastName; }
-    public function setLastName(string $lastName): static { $this->lastName = $lastName; return $this; }
+    public function getLastName(): ?string 
+    { 
+        return $this->lastName; 
+    }
+    
+    public function setLastName(string $lastName): static 
+    { 
+        $this->lastName = $lastName; 
+        return $this; 
+    }
 
-    public function getJobTitle(): ?string { return $this->jobTitle; }
-    public function setJobTitle(string $jobTitle): static { $this->jobTitle = $jobTitle; return $this; }
+    public function getJobTitle(): ?string 
+    { 
+        return $this->jobTitle; 
+    }
+    
+    public function setJobTitle(string $jobTitle): static 
+    { 
+        $this->jobTitle = $jobTitle; 
+        return $this; 
+    }
 
-    public function getHeroTagline(): ?string { return $this->heroTagline; }
-    public function setHeroTagline(?string $heroTagline): static { $this->heroTagline = $heroTagline; return $this; }
+    public function getHeroTagline(): ?string 
+    { 
+        return $this->heroTagline; 
+    }
+    
+    public function setHeroTagline(?string $heroTagline): static 
+    { 
+        $this->heroTagline = $heroTagline; 
+        return $this; 
+    }
 
-    public function getBioHeadline(): ?string { return $this->bioHeadline; }
-    public function setBioHeadline(?string $bioHeadline): static { $this->bioHeadline = $bioHeadline; return $this; }
+    public function getBioHeadline(): ?string 
+    { 
+        return $this->bioHeadline; 
+    }
+    
+    public function setBioHeadline(?string $bioHeadline): static 
+    { 
+        $this->bioHeadline = $bioHeadline; 
+        return $this; 
+    }
 
-    public function getBioBackground(): ?string { return $this->bioBackground; }
-    public function setBioBackground(?string $bioBackground): static { $this->bioBackground = $bioBackground; return $this; }
+    public function getBioBackground(): ?string 
+    { 
+        return $this->bioBackground; 
+    }
+    
+    public function setBioBackground(?string $bioBackground): static 
+    { 
+        $this->bioBackground = $bioBackground; 
+        return $this; 
+    }
 
-    public function getBioObjective(): ?string { return $this->bioObjective; }
-    public function setBioObjective(?string $bioObjective): static { $this->bioObjective = $bioObjective; return $this; }
+    public function getBioObjective(): ?string 
+    { 
+        return $this->bioObjective; 
+    }
+    
+    public function setBioObjective(?string $bioObjective): static 
+    { 
+        $this->bioObjective = $bioObjective; 
+        return $this; 
+    }
 
-    public function getAvailability(): ?string { return $this->availability; }
-    public function setAvailability(?string $availability): static { $this->availability = $availability; return $this; }
+    public function getCvSummary(): ?string 
+    { 
+        return $this->cvSummary; 
+    }
+    
+    public function setCvSummary(?string $cvSummary): static 
+    { 
+        $this->cvSummary = $cvSummary; 
+        return $this; 
+    }
 
-    public function getContractType(): ?string { return $this->contractType; }
-    public function setContractType(?string $contractType): static { $this->contractType = $contractType; return $this; }
+    public function getAvailability(): ?string 
+    { 
+        return $this->availability; 
+    }
+    
+    public function setAvailability(?string $availability): static 
+    { 
+        $this->availability = $availability; 
+        return $this; 
+    }
 
-    public function getSituation(): ?string { return $this->situation; }
-    public function setSituation(?string $situation): static { $this->situation = $situation; return $this; }
+    public function getContractType(): ?string 
+    { 
+        return $this->contractType; 
+    }
+    
+    public function setContractType(?string $contractType): static 
+    { 
+        $this->contractType = $contractType; 
+        return $this; 
+    }
 
-    public function getInterests(): ?array { return $this->interests; }
-    public function setInterests(array $interests): static { $this->interests = $interests; return $this; }
+    public function getSituation(): ?string 
+    { 
+        return $this->situation; 
+    }
+    
+    public function setSituation(?string $situation): static 
+    { 
+        $this->situation = $situation; 
+        return $this; 
+    }
 
-    public function getEmail(): ?string { return $this->email; }
-    public function setEmail(string $email): static { $this->email = $email; return $this; }
+    public function getEmail(): ?string 
+    { 
+        return $this->email; 
+    }
+    
+    public function setEmail(string $email): static 
+    { 
+        $this->email = $email; 
+        return $this; 
+    }
 
-    public function getPhone(): ?string { return $this->phone; }
-    public function setPhone(?string $phone): static { $this->phone = $phone; return $this; }
+    public function getPhone(): ?string 
+    { 
+        return $this->phone; 
+    }
+    
+    public function setPhone(?string $phone): static 
+    { 
+        $this->phone = $phone; 
+        return $this; 
+    }
 
-    public function getLocation(): ?string { return $this->location; }
-    public function setLocation(?string $location): static { $this->location = $location; return $this; }
+    public function getLocation(): ?string 
+    { 
+        return $this->location; 
+    }
+    
+    public function setLocation(?string $location): static 
+    {  
+        $this->location = $location; 
+        return $this; 
+    }
 
-    public function getMapUrl(): ?string { return $this->mapUrl; }
-    public function setMapUrl(?string $mapUrl): static { $this->mapUrl = $mapUrl; return $this; }
+    public function getMapUrl(): ?string 
+    { 
+        return $this->mapUrl; 
+    }
+    
+    public function setMapUrl(?string $mapUrl): static 
+    { 
+        $this->mapUrl = $mapUrl; 
+        return $this; 
+    }
 
-    public function getLinkedinUrl(): ?string { return $this->linkedinUrl; }
-    public function setLinkedinUrl(?string $linkedinUrl): static { $this->linkedinUrl = $linkedinUrl; return $this; }
+    public function getLinkedinUrl(): ?string 
+    { 
+        return $this->linkedinUrl; 
+    }
+    
+    public function setLinkedinUrl(?string $linkedinUrl): static 
+    { 
+        $this->linkedinUrl = $linkedinUrl; 
+        return $this; 
+    }
 
-    public function getGithubUrl(): ?string { return $this->githubUrl; }
-    public function setGithubUrl(?string $githubUrl): static { $this->githubUrl = $githubUrl; return $this; }
+    public function getGithubUrl(): ?string 
+    { 
+        return $this->githubUrl;
+    }
+    
+    public function setGithubUrl(?string $githubUrl): static 
+    { 
+        $this->githubUrl = $githubUrl; 
+        return $this; 
+    }
 
-    public function getWebsiteUrl(): ?string { return $this->websiteUrl; }
-    public function setWebsiteUrl(?string $websiteUrl): static { $this->websiteUrl = $websiteUrl; return $this; }
+    public function getWebsiteUrl(): ?string 
+    { 
+        return $this->websiteUrl; 
+    }
+    
+    public function setWebsiteUrl(?string $websiteUrl): static 
+    { 
+        $this->websiteUrl = $websiteUrl; 
+        return $this; 
+    }
 
-    public function getPhotoFile(): ?string { return $this->photoFile; }
-    public function setPhotoFile(?string $photoFile): static { $this->photoFile = $photoFile; return $this; }
+    public function getPhotoFile(): ?string 
+    { 
+        return $this->photoFile; 
+    }
+    
+    public function setPhotoFile(?string $photoFile): static 
+    { 
+        $this->photoFile = $photoFile; 
+        return $this; 
+    }
 
-    public function getPhotoFileFile(): ?File { return $this->photoFileFile; }
+    public function getPhotoFileFile(): ?File 
+    { 
+        return $this->photoFileFile; 
+    }
+    
     public function setPhotoFileFile(?File $photoFileFile = null): static
     {
         $this->photoFileFile = $photoFileFile;
@@ -165,22 +324,58 @@ class User
         return $this;
     }
 
-    public function getCvFile(): ?string { return $this->cvFile; }
-    public function setCvFile(?string $cvFile): static { $this->cvFile = $cvFile; return $this; }
-
-    public function getCvFileFile(): ?File { return $this->cvFileFile; }
-    public function setCvFileFile(?File $cvFileFile = null): static
-    {
-        $this->cvFileFile = $cvFileFile;
-        if ($cvFileFile !== null) {
-            $this->updatedAt = new \DateTime();
-        }
-        return $this;
+    public function getContactTagline(): ?string 
+    { 
+        return $this->contactTagline; 
+    }
+    
+    public function setContactTagline(?string $contactTagline): static 
+    { 
+        $this->contactTagline = $contactTagline; 
+        return $this; 
     }
 
-    public function getContactTagline(): ?string { return $this->contactTagline; }
-    public function setContactTagline(?string $contactTagline): static { $this->contactTagline = $contactTagline; return $this; }
+    public function getBirthDate(): ?string 
+    { 
+        return $this->birthDate; 
+    }
+    
+    public function setBirthDate(?string $birthDate): static 
+    { 
+        $this->birthDate = $birthDate; 
+        return $this; 
+    }
 
-    public function getUpdatedAt(): ?\DateTimeInterface { return $this->updatedAt; }
-    public function setUpdatedAt(?\DateTimeInterface $updatedAt): static { $this->updatedAt = $updatedAt; return $this; }
+    public function isDrivingLicense(): ?bool 
+    { 
+        return $this->drivingLicense; 
+    }
+    
+    public function setDrivingLicense(?bool $drivingLicense): static 
+    { 
+        $this->drivingLicense = $drivingLicense; 
+        return $this; 
+    }
+
+    public function isVehicle(): ?bool 
+    { 
+        return $this->vehicle; 
+    }
+    
+    public function setVehicle(?bool $vehicle): static 
+    { 
+        $this->vehicle = $vehicle; 
+        return $this; 
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface 
+    { 
+        return $this->updatedAt; 
+    }
+    
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): static 
+    { 
+        $this->updatedAt = $updatedAt; 
+        return $this; 
+    }
 }

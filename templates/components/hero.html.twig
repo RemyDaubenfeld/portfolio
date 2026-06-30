@@ -19,7 +19,10 @@
             <a href="#projects" class="font-mono text-[0.76rem] tracking-[0.07em] uppercase text-bg bg-gold border border-gold px-[1.6rem] py-[0.72rem] no-underline transition-opacity duration-200 hover:opacity-80">
                 Voir les projets
             </a>
-            <a href="{{ vich_uploader_asset(user, 'cvFileFile') }}" download="CV de {{ user.firstName}} {{ user.lastName}}" class="font-mono text-[0.76rem] tracking-[0.07em] uppercase text-text-dim bg-transparent border border-border px-[1.6rem] py-[0.72rem] no-underline transition-all duration-200 hover:border-text-dim hover:text-text">
+            <a href="{{ path('app_cv') }}" class="font-mono text-[0.76rem] tracking-[0.07em] uppercase text-text-dim bg-transparent border border-border px-[1.6rem] py-[0.72rem] no-underline transition-all duration-200 hover:border-text-dim hover:text-text">
+                Visualiser le CV en ligne
+            </a>
+            <a href="{{ path('app_cv_download') }}" class="font-mono text-[0.76rem] tracking-[0.07em] uppercase text-text-dim bg-transparent border border-border px-[1.6rem] py-[0.72rem] no-underline transition-all duration-200 hover:border-text-dim hover:text-text">
                 Télécharger le CV
             </a>
         </div>

@@ -22,9 +22,15 @@ class AdminUser implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private string $password = '';
 
-    public function getId(): ?int { return $this->id; }
+    public function getId(): ?int 
+    { 
+        return $this->id; 
+    }
 
-    public function getEmail(): ?string { return $this->email; }
+    public function getEmail(): ?string 
+    { 
+        return $this->email; 
+    }
 
     public function setEmail(string $email): static
     {
@@ -32,11 +38,20 @@ class AdminUser implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getUserIdentifier(): string { return (string) $this->email; }
+    public function getUserIdentifier(): string 
+    { 
+        return (string) $this->email; 
+    }
 
-    public function getRoles(): array { return ['ROLE_ADMIN']; }
+    public function getRoles(): array 
+    { 
+        return ['ROLE_ADMIN']; 
+    }
 
-    public function getPassword(): string { return $this->password; }
+    public function getPassword(): string 
+    { 
+        return $this->password; 
+    }
 
     public function setPassword(string $password): static
     {

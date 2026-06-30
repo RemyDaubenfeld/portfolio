@@ -4,7 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -16,7 +16,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use Vich\UploaderBundle\Form\Type\VichImageType;
-use Vich\UploaderBundle\Form\Type\VichFileType;
 
 class UserCrudController extends AbstractCrudController
 {
@@ -58,13 +57,15 @@ class UserCrudController extends AbstractCrudController
             ->setNumOfRows(4)->hideOnIndex();
         yield TextareaField::new('bioObjective', 'Bio — objectif')
             ->setNumOfRows(3)->hideOnIndex();
+        yield TextareaField::new('cvSummary', 'Accroche CV')
+            ->setNumOfRows(3)
+            ->setHelp('Texte affiché uniquement sur le CV. Si vide, la bio accroche sera utilisée.')
+            ->hideOnIndex();
 
         yield TextField::new('situation', 'Situation actuelle')->hideOnIndex();
         yield TextField::new('contractType', 'Type de contrat recherché')->hideOnIndex();
         yield TextareaField::new('availability', 'Disponibilité')->hideOnIndex();
         yield TextareaField::new('contactTagline', 'Tagline section contact')->hideOnIndex();
-
-        yield ArrayField::new('interests', 'Centres d\'intérêt')->hideOnIndex();
 
         yield EmailField::new('email', 'Email');
         yield TelephoneField::new('phone', 'Téléphone')->hideOnIndex();
@@ -75,16 +76,14 @@ class UserCrudController extends AbstractCrudController
         yield UrlField::new('githubUrl', 'GitHub')->hideOnIndex();
         yield UrlField::new('websiteUrl', 'Site web')->hideOnIndex();
 
-        // Photo
+        yield TextField::new('birthDate', 'Date / âge')->hideOnIndex()
+            ->setHelp('Ex: 38 ans ou 12/05/1987');
+        yield BooleanField::new('drivingLicense', 'Permis B')->hideOnIndex();
+        yield BooleanField::new('vehicle', 'Véhicule personnel')->hideOnIndex();
+
         yield Field::new('photoFileFile', 'Photo de profil')
             ->setFormType(VichImageType::class)
             ->setRequired(false)
             ->hideOnIndex();
-
-        // CV
-        yield Field::new('cvFileFile', 'CV (PDF)')
-            ->setFormType(VichFileType::class)
-            ->setRequired(false)
-        ->hideOnIndex();
     }
 }

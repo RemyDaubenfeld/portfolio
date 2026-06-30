@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>CV — {{ user.firstName }} {{ user.lastName }}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: DejaVu Sans, sans-serif; font-size: 8pt; color: #1a1a1a; background: #ffffff; }
+
+        .wrapper { display: table; width: 100%; }
+        .col-left { display: table-cell; width: 32%; height: 97%; background: #1A1D24; color: #F0EDE6; padding: 16px 12px; vertical-align: top; }
+        .col-right { display: table-cell; width: 68%; background: #ffffff; padding: 16px 14px; vertical-align: top; }
+
+        h1 { font-size: 14pt; color: #F0EDE6; margin-bottom: 2px; }
+        .job-title { color: #4EC9B0; font-size: 9.5pt; margin-bottom: 16px; }
+
+        .section-title-left {
+            font-size: 7pt; text-transform: uppercase; letter-spacing: 1.5px;
+            color: #C8A96E; border-bottom: 1px solid #C8A96E;
+            padding-bottom: 3px; margin-bottom: 8px; margin-top: 20px;
+        }
+        .section-title-right {
+            font-size: 7pt; text-transform: uppercase; letter-spacing: 1.5px;
+            color: #C8A96E; border-bottom: 1px solid #e0d8c8;
+            padding-bottom: 3px; margin-bottom: 6px; margin-top: 20px;
+        }
+
+        .photo-wrapper { text-align: center; margin-bottom: 12px; }
+        .photo { width: 80px; height: 80px; border-radius: 50%; border: 3px solid #C8A96E; }
+        .contact-item { margin-bottom: 5px; color: #8A8780; font-size: 8pt; display: table; width: 100%; }
+        .icon { display: table-cell; width: 16px; vertical-align: middle; padding-right: 4px; }
+        .icon img { width: 12px; height: 12px; }
+        .lang-row { display: table; width: 100%; margin-bottom: 4px; }
+        .lang-name { display: table-cell; color: #F0EDE6; font-size: 8pt; }
+        .lang-level { display: table-cell; text-align: right; color: #4EC9B0; font-size: 7.5pt; }
+        .skill-cat { color: #4A4D55; font-size: 7pt; text-transform: uppercase; letter-spacing: 1px; margin-top: 6px; margin-bottom: 3px; }
+        .skill-tag { display: inline-block; background: #22252E; color: #8A8780; font-size: 7pt; padding: 1px 5px; border-radius: 3px; margin: 2px 4px 2px 0; border: 1px solid #2A2D35; }
+        .interest-tag { display: inline-block; background: #22252E; color: #8A8780; font-size: 7pt; padding: 1px 5px; border-radius: 3px; margin: 2px 4px 2px 0; }
+
+        .bio { color: #3a3a3a; font-size: 8pt; line-height: 1.5; margin-bottom: 2px; }
+        .bio-dim { color: #555; font-size: 8pt; line-height: 1.5; }
+
+        .timeline-item { margin-bottom: 6px; padding-left: 12px; border-left: 2px solid #e8e0d0; }
+        .timeline-item-edu { margin-bottom: 6px; padding-left: 12px; border-left: 2px solid #c8ede8; }
+        .item-header { display: table; width: 100%; }
+        .item-left { display: table-cell; vertical-align: top; }
+        .item-right { display: table-cell; text-align: right; vertical-align: top; white-space: nowrap; }
+        .item-title { font-size: 9.5pt; font-weight: bold; color: #1a1a1a; }
+        .item-company { font-size: 8pt; color: #4EC9B0; margin-top: 1px; }
+        .item-dates { font-size: 7pt; color: #888; }
+        .item-type { font-size: 7pt; color: #aaa; text-transform: capitalize; }
+        .item-desc { font-size: 8pt; color: #555; line-height: 1.5; margin-top: 4px; }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+
+    <div class="col-left">
+        {% if user.photoFile %}
+            <div class="photo-wrapper">
+                <img src="{{ absolute_url(asset('assets/img/' ~ user.photoFile)) }}" class="photo" alt="{{ user.firstName }} {{ user.lastName }}">
+            </div>
+        {% endif %}
+
+        <h1 style="text-align:center">{{ user.firstName }} {{ user.lastName }}</h1>
+        <p class="job-title" style="text-align:center">{{ user.jobTitle }}</p>
+
+        <div class="section-title-left">Contact</div>
+        {% if user.email %}
+            <div class="contact-item">
+                <span class="icon"><img src="{{ absolute_url(asset('assets/img/cv/mail.webp')) }}" alt="mail"></span>
+                {{ user.email }}
+            </div>
+        {% endif %}
+
+        {% if user.phone %}
+            <div class="contact-item">
+                <span class="icon"><img src="{{ absolute_url(asset('assets/img/cv/phone.webp')) }}" alt="phone"></span>
+                {{ user.phone }}
+            </div>
+        {% endif %}
+
+        {% if user.location %}
+            <div class="contact-item">
+                <span class="icon"><img src="{{ absolute_url(asset('assets/img/cv/location.webp')) }}" alt="location"></span>
+                {{ user.location }}
+            </div>
+        {% endif %}
+
+        {% if age %}
+            <div class="contact-item">
+                <span class="icon"><img src="{{ absolute_url(asset('assets/img/cv/age.webp')) }}" alt="age"></span>
+                {{ age }} ans
+            </div>
+        {% endif %}
+        
+        {% if user.drivingLicense %}
+            <div class="contact-item">
+                <span class="icon"><img src="{{ absolute_url(asset('assets/img/cv/car.webp')) }}" alt="car"></span>
+                Permis B{% if user.vehicle %} — Véhicule{% endif %}
+            </div>
+        {% endif %}
+
+        <div class="section-title-left">
+            Réseaux
+        </div>
+        {% if user.linkedinUrl %}
+            <div class="contact-item">
+                <span class="icon"><img src="{{ absolute_url(asset('assets/img/cv/linkedin.webp')) }}" alt="linkedin"></span>
+                {{ user.linkedinUrl|replace({'https://www.linkedin.com/in/': '@'}) }}
+            </div>
+        {% endif %}
+
+        {% if user.githubUrl %}
+            <div class="contact-item">
+                <span class="icon"><img src="{{ absolute_url(asset('assets/img/cv/github.webp')) }}" alt="github"></span>
+                {{ user.githubUrl|replace({'https://github.com/': '@'}) }}
+            </div>
+        {% endif %}
+        
+        {% if user.websiteUrl %}
+            <div class="contact-item">
+                <span class="icon"><img src="{{ absolute_url(asset('assets/img/cv/website.webp')) }}" alt="website"></span>
+                {{ user.websiteUrl|replace({'https://': ''}) }}
+            </div>
+        {% endif %}
+
+        {% if languages %}
+            <div class="section-title-left">Langues</div>
+            {% for lang in languages %}
+                <div class="lang-row">
+                    <div class="lang-name">{{ lang.name }}</div>
+                    <div class="lang-level">{{ lang.level }}</div>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if skill_cats %}
+            <div class="section-title-left">Compétences</div>
+            {% for cat in skill_cats %}
+                {% if cat.skills|length > 0 %}
+                    <div class="skill-cat">{{ cat.name }}</div>
+                    {% for skill in cat.skills %}
+                        <span class="skill-tag">{{ skill.name }}</span>
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        {% if interests %}
+            <div class="section-title-left">Centres d'intérêt</div>
+            {% for interest in interests %}
+                <span class="interest-tag">{{ interest.name }}</span>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <div class="col-right">
+        {% set summary = user.cvSummary ?? user.bioHeadline %}
+        {% if summary or user.bioBackground %}
+        <div class="section-title-right">Profil</div>
+            {% if summary %}
+                <p class="bio">{{ summary | raw }}</p>
+            {% endif %}
+            {% if not user.cvSummary and user.bioBackground %}
+                <p class="bio-dim">{{ user.bioBackground }}</p>
+            {% endif %}
+        {% endif %}
+
+        {% if experiences %}
+            <div class="section-title-right">Expériences professionnelles</div>
+            {% for exp in experiences %}
+                <div class="timeline-item">
+                    <div class="item-header">
+                        <div>
+                            <div class="item-dates">{{ exp.startDate }} → {{ exp.endDate ?? "Aujourd'hui" }}</div>
+                            <div class="item-title">{{ exp.title }}</div>
+                            <div class="item-company">{{ exp.company }}{% if exp.location %} — {{ exp.location }}{% endif %}</div>
+                        </div>
+                    </div>
+                    {% if exp.description %}
+                        <div class="item-desc">{{ exp.description }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if educations %}
+        <div class="section-title-right">Diplômes & Formations</div>
+            {% for edu in educations %}
+                <div class="timeline-item-edu">
+                    <div class="item-header">
+                        <div>
+                            <div class="item-dates">{{ edu.startDate }} → {{ edu.endDate ?? "Aujourd'hui" }}</div>
+                            <div class="item-title">{{ edu.title }}</div>
+                            <div class="item-company">{{ edu.institution }}{% if edu.location %} — {{ edu.location }}{% endif %}</div>
+                        </div>
+                    </div>
+                    {% if edu.description %}
+                        <div class="item-desc">{{ edu.description | raw }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+</body>
+</html>

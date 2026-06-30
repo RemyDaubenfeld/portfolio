@@ -1,0 +1,262 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}CV — {{ user.firstName }} {{ user.lastName }}{% endblock %}
+
+{% block body %}
+<div class="min-h-screen font-[var(--font-body)]" style="background:var(--color-bg);color:var(--color-text)">
+
+    {# ── Header ── #}
+    <div class="max-w-5xl mx-auto px-6 py-8 flex items-center justify-between">
+        <a href="{{ path('app_home') }}"
+           class="text-sm flex items-center gap-2 transition-colors"
+           style="color:var(--color-gold)">
+            ← Retour au portfolio
+        </a>
+        <a href="{{ path('app_cv_download') }}"
+           class="flex items-center gap-2 font-semibold px-5 py-2.5 rounded-lg transition-colors text-sm"
+           style="background:var(--color-gold);color:var(--color-bg)">
+            ↓ Télécharger le CV en PDF
+        </a>
+    </div>
+
+    {# ── CV Container ── #}
+    <div class="max-w-5xl mx-auto px-6 pb-16 grid grid-cols-1 md:grid-cols-3 gap-0 rounded-2xl overflow-hidden shadow-2xl"
+         style="border:1px solid var(--color-border)">
+
+        {# ══ Colonne gauche ══ #}
+        <div class="px-8 py-10 flex flex-col gap-8" style="background:var(--color-bg2)">
+
+            {# Photo #}
+            {% if user.photoFile %}
+            <div class="flex justify-center">
+                <div class="relative photo-rings">
+                    <img src="{{ asset('assets/img/' ~ user.photoFile) }}"
+                         alt="{{ user.firstName }} {{ user.lastName }}"
+                         class="w-32 h-32 rounded-full object-cover"
+                         style="border:3px solid var(--color-gold)">
+                </div>
+            </div>
+            {% endif %}
+
+            {# Nom & titre #}
+            <div class="text-center">
+                <h1 class="text-xl font-bold tracking-wide" style="font-family:var(--font-display)">
+                    {{ user.firstName }}
+                    <span style="color:var(--color-gold)">{{ user.lastName }}</span>
+                </h1>
+                <p class="text-sm mt-1" style="color:var(--color-cyan)">{{ user.jobTitle }}</p>
+            </div>
+
+            {# Contact #}
+            <div class="flex flex-col gap-2 text-sm" style="color:var(--color-text-dim)">
+                <h2 class="text-xs font-semibold uppercase tracking-widest mb-1 eyebrow-line pt-2"
+                    style="font-family:var(--font-display);color:var(--color-gold)">Contact</h2>
+                {% if user.email %}
+                <div class="flex items-center gap-2">
+                    <img src="{{ asset('assets/img/cv/mail.webp') }}" alt="mail" class="w-4 "/>
+                    {{ user.email }}
+                </div>
+                {% endif %}
+                {% if user.phone %}
+                <div class="flex items-center gap-2">
+                    <img src="{{ asset('assets/img/cv/phone.webp') }}" alt="phone" class="w-4 "/>
+                    {{ user.phone }}
+                </div>
+                {% endif %}
+                {% if user.location %}
+                <div class="flex items-center gap-2">
+                    <img src="{{ asset('assets/img/cv/location.webp') }}" alt="location" class="w-4 "/>
+                    {{ user.location }}
+                </div>
+                {% endif %}
+                {% if age %}
+                <div class="flex items-center gap-2">
+                    <img src="{{ asset('assets/img/cv/age.webp') }}" alt="age" class="w-4 "/>
+                    {{ age }} ans
+                </div>
+                {% endif %}
+                {% if user.drivingLicense %}
+                <div class="flex items-center gap-2">
+                    <img src="{{ asset('assets/img/cv/car.webp') }}" alt="car" class="w-4 "/>
+                    Permis B{% if user.vehicle %} — Véhicule personnel{% endif %}
+                </div>
+                {% endif %}
+            </div>
+
+            {# Réseaux #}
+            <div class="flex flex-col gap-2 text-sm">
+                <h2 class="text-xs font-semibold uppercase tracking-widest mb-1 eyebrow-line pt-2"
+                    style="font-family:var(--font-display);color:var(--color-gold)">Réseaux</h2>
+                {% if user.linkedinUrl %}
+                <a href="{{ user.linkedinUrl }}" target="_blank"
+                   class="flex items-center gap-2 transition-colors hover:opacity-80"
+                   style="color:var(--color-text-dim)">
+                    <img src="{{ asset('assets/img/cv/linkedin.webp') }}" alt="linkedin" class="w-4 "/>
+                    LinkedIn
+                </a>
+                {% endif %}
+                {% if user.githubUrl %}
+                <a href="{{ user.githubUrl }}" target="_blank"
+                   class="flex items-center gap-2 transition-colors hover:opacity-80"
+                   style="color:var(--color-text-dim)">
+                    <img src="{{ asset('assets/img/cv/github.webp') }}" alt="github" class="w-4 "/>
+                    GitHub
+                </a>
+                {% endif %}
+                {% if user.websiteUrl %}
+                <a href="{{ user.websiteUrl }}" target="_blank"
+                   class="flex items-center gap-2 transition-colors hover:opacity-80"
+                   style="color:var(--color-text-dim)">
+                    <img src="{{ asset('assets/img/cv/website.webp') }}" alt="website" class="w-4 "/>
+                    Portfolio
+                </a>
+                {% endif %}
+            </div>
+
+            {# Langues #}
+            {% if languages %}
+            <div class="flex flex-col gap-2">
+                <h2 class="text-xs font-semibold uppercase tracking-widest mb-1 eyebrow-line pt-2"
+                    style="font-family:var(--font-display);color:var(--color-gold)">Langues</h2>
+                {% for lang in languages %}
+                <div class="flex justify-between text-sm">
+                    <span style="color:var(--color-text)">{{ lang.name }}</span>
+                    <span class="text-xs" style="font-family:var(--font-mono);color:var(--color-cyan)">{{ lang.level }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {# Compétences #}
+            {% if skill_cats %}
+            <div class="flex flex-col gap-4">
+                <h2 class="text-xs font-semibold uppercase tracking-widest eyebrow-line pt-2"
+                    style="font-family:var(--font-display);color:var(--color-gold)">Compétences</h2>
+                {% for cat in skill_cats %}
+                {% if cat.skills|length > 0 %}
+                <div>
+                    <p class="text-xs uppercase tracking-wider mb-1.5 skill-domain-before flex items-center gap-2"
+                       style="color:var(--color-text-mute)">{{ cat.name }}</p>
+                    <div class="flex flex-wrap gap-1.5">
+                        {% for skill in cat.skills %}
+                        <span class="text-xs px-2 py-0.5 rounded"
+                              style="background:var(--color-bg3);border:1px solid var(--color-border);color:var(--color-text-dim)">
+                            {{ skill.name }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {# Centres d'intérêt #}
+            {% if interests %}
+            <div class="flex flex-col gap-2">
+                <h2 class="text-xs font-semibold uppercase tracking-widest mb-1 eyebrow-line pt-2"
+                    style="font-family:var(--font-display);color:var(--color-gold)">Centres d'intérêt</h2>
+                <div class="flex flex-wrap gap-1.5">
+                    {% for interest in interests %}
+                    <span class="text-xs px-2 py-0.5 rounded"
+                          style="background:var(--color-bg3);border:1px solid var(--color-border);color:var(--color-text-dim)">
+                        {{ interest.name }}
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+
+        {# ══ Colonne droite ══ #}
+        <div class="md:col-span-2 px-10 py-10 flex flex-col gap-10" style="background:var(--color-bg)">
+
+            {# Profil / Accroche #}
+            {% set summary = user.cvSummary ?? user.bioHeadline %}
+            {% if summary or user.bioBackground %}
+            <div>
+                <h2 class="text-xs font-semibold uppercase tracking-widest mb-4 eyebrow-line pt-2"
+                    style="font-family:var(--font-display);color:var(--color-gold)">Profil</h2>
+                {% if summary %}
+                <p class="text-sm leading-relaxed mb-2" style="color:var(--color-text)">{{ summary | raw }}</p>
+                {% endif %}
+                {% if not user.cvSummary and user.bioBackground %}
+                <p class="text-sm leading-relaxed" style="color:var(--color-text-dim)">{{ user.bioBackground | raw}}</p>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {# Expériences #}
+            {% if experiences %}
+            <div>
+                <h2 class="text-xs font-semibold uppercase tracking-widest mb-6 eyebrow-line pt-2"
+                    style="font-family:var(--font-display);color:var(--color-gold)">Expériences professionnelles</h2>
+                <div class="flex flex-col gap-6 relative"
+                     style="padding-left:1.25rem;border-left:1px solid var(--color-border)">
+                    {% for exp in experiences %}
+                    <div class="relative">
+                        <div class="absolute w-2 h-2 rounded-full"
+                             style="left:-1.5rem;top:0.35rem;background:var(--color-gold)"></div>
+                        <div>
+                            <div>
+                                <h3 class="font-semibold" style="font-family:var(--font-display);color:var(--color-text)">{{ exp.title }}</h3>
+                                <p class="text-sm mt-0.5" style="color:var(--color-cyan)">
+                                    {{ exp.company }}{% if exp.location %} — {{ exp.location }}{% endif %}
+                                </p>
+                            </div>
+                            <div>
+                                {% if exp.type %}
+                                <p class="text-xs capitalize mt-0.5" style="color:var(--color-text-mute)">{{ exp.type }}</p>
+                                {% endif %}
+                                <span class="text-xs whitespace-nowrap"
+                                      style="font-family:var(--font-mono);color:var(--color-text-mute)">
+                                    {{ exp.startDate }} → {{ exp.endDate ?? 'Aujourd\'hui' }}
+                                </span>
+                            </div>
+                        </div>
+                        {% if exp.description %}
+                        <p class="text-sm mt-2 leading-relaxed" style="color:var(--color-text-dim)">{{ exp.description }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {# Formations #}
+            {% if educations %}
+            <div>
+                <h2 class="text-xs font-semibold uppercase tracking-widest mb-6 eyebrow-line pt-2"
+                    style="font-family:var(--font-display);color:var(--color-gold)">Diplômes & Formations</h2>
+                <div class="flex flex-col gap-6 relative"
+                     style="padding-left:1.25rem;border-left:1px solid var(--color-border)">
+                    {% for edu in educations %}
+                    <div class="relative">
+                        <div class="absolute w-2 h-2 rounded-full"
+                             style="left:-1.5rem;top:0.35rem;background:var(--color-cyan)"></div>
+                        <div class="flex items-start justify-between gap-4 flex-wrap">
+                            <div>
+                                <h3 class="font-semibold" style="font-family:var(--font-display);color:var(--color-text)">{{ edu.title }}</h3>
+                                <p class="text-sm mt-0.5" style="color:var(--color-cyan)">
+                                    {{ edu.institution }}{% if edu.location %} — {{ edu.location }}{% endif %}
+                                </p>
+                                <p class="text-xs whitespace-nowrap" style="font-family:var(--font-mono);color:var(--color-text-mute)">
+                                {{ edu.startDate }} → {{ edu.endDate ?? 'Aujourd\'hui' }}
+                                </p>
+                            </div>
+                            
+                        </div>
+                        {% if edu.description %}
+                        <p class="text-sm mt-2 leading-relaxed" style="color:var(--color-text-dim)">{{ edu.description | raw }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+{% endblock %}
