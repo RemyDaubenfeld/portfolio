@@ -2,6 +2,8 @@
 
 namespace App\Controller\Admin;
 
+use App\Controller\Admin\ChatbotConfigCrudController;
+use App\Controller\Admin\ChatbotPromptCrudController;
 use App\Controller\Admin\EducationCrudController;
 use App\Controller\Admin\ExperienceCrudController;
 use App\Controller\Admin\HeroStatCrudController;
@@ -59,7 +61,10 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkTo(HeroStatCrudController::class, 'Stats', 'fa fa-chart-bar');
         yield MenuItem::linkTo(HeroTypingCrudController::class, 'Phrases (typing)', 'fa fa-keyboard');
 
-    
+        yield MenuItem::section('Chatbot');
+        yield MenuItem::linkTo(ChatbotConfigCrudController::class, 'Configuration', 'fa fa-robot');
+        yield MenuItem::linkTo(ChatbotPromptCrudController::class, 'Connaissances', 'fa fa-brain');
+
         yield MenuItem::section('Divers');
         yield MenuItem::linkTo(SettingCrudController::class, 'Paramètres', 'fa fa-cog');
         yield MenuItem::linkTo(SeoCrudController::class, 'SEO / GEO', 'fa fa-search')->setAction('index');

@@ -1,7 +1,7 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ['input', 'messages', 'widget', 'toggle'];
+    static targets = ['input', 'messages', 'widget'];
 
     connect() {
         this.history = [];
@@ -20,15 +20,28 @@ export default class extends Controller {
     }
 
     async playIntro() {
-        this.appendMessage('assistant', '☕', true);
-        await this.wait(1500);
-        this.removeTypingIndicator();
-        this.appendMessage('assistant', "Salut, je suis Stag'IA'ire, l'IA-ssistant de Rémy! Je suis là pour parler de ses compétences (et pour aller lui chercher du café virtuel pendant qu'il code).");
+        try {
+            const res = await fetch('/api/chat/config');
+            const config = await res.json();
 
-        this.appendMessage('assistant', '☕', true);
-        await this.wait(1800);
-        this.removeTypingIndicator();
-        this.appendMessage('assistant', "Pose-moi tes questions sur son parcours, ses technos préférées ou demande-lui un entretien — je transmets (en théorie).");
+            if (!config.isActive) return;
+
+            if (config.introMessage1) {
+                this.appendMessage('assistant', '☕', true);
+                await this.wait(1500);
+                this.removeTypingIndicator();
+                this.appendMessage('assistant', config.introMessage1);
+            }
+
+            if (config.introMessage2) {
+                this.appendMessage('assistant', '☕', true);
+                await this.wait(1800);
+                this.removeTypingIndicator();
+                this.appendMessage('assistant', config.introMessage2);
+            }
+        } catch (e) {
+            // Silencieux si l'API config échoue
+        }
     }
 
     wait(ms) {
@@ -61,7 +74,7 @@ export default class extends Controller {
             this.appendMessage('assistant', reply);
         } catch (error) {
             this.removeTypingIndicator();
-            this.appendMessage('assistant', 'Le stag\'IA\'ire est parti chercher du café... et ne revient plus. Réessaie plus tard.');
+            this.appendMessage('assistant', "Le stag'IA'ire est parti chercher du café... et ne revient plus. Réessaie plus tard.");
         }
     }
 

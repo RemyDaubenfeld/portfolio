@@ -70,14 +70,14 @@
         class="fixed bottom-8 right-8 w-14 h-14 rounded-full bg-[var(--color-gold)] border-none cursor-pointer z-[1000] shadow-lg shadow-black/30 transition-transform hover:scale-110 overflow-hidden p-0"
         aria-label="Ouvrir le chat"
     >
-        <img src="{{ asset('assets/img/stagiaire-icon.webp') }}" alt="Stag'IA'ire" class="w-full h-full object-cover">
+        <img src="{{ vich_uploader_asset(chatbotConfig, 'iconFile') }}" alt="{{ chatbotConfig.name }}" class="w-full h-full object-cover">
     </button>
 
-    <div data-chat-target="widget" class="hidden fixed bottom-24 right-8 w-96 h-[480px] bg-[#1a1a1a] border border-[var(--color-gold)] rounded-2xl flex flex-col z-[1000] shadow-2xl shadow-black/50">
+    <div data-chat-target="widget" class="hidden fixed bottom-24 right-8 w-100 h-[480px] bg-[#1a1a1a] border border-[var(--color-gold)] rounded-2xl flex flex-col z-[1000] shadow-2xl shadow-black/50">
         <div class="px-4 py-3 border-b border-[var(--color-gold)] flex justify-between items-center text-[var(--color-gold)] font-semibold">
             <span class="flex items-center gap-2">
-                <img src="{{ asset('assets/img/stagiaire-icon.webp') }}" alt="" class="w-6 h-6 rounded-full">
-                Stag'IA'ire
+                <img src="{{ vich_uploader_asset(chatbotConfig, 'iconFile') }}" alt="{{ chatbotConfig.name }}" class="w-9 h-9 rounded-full">
+                {{ chatbotConfig.name }}
             </span>
             <button data-action="click->chat#toggle" class="bg-transparent border-none text-[var(--color-gold)] cursor-pointer text-base" aria-label="Fermer le chat">✕</button>
         </div>
