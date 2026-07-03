@@ -15,6 +15,7 @@ use App\Controller\Admin\SkillCategoryCrudController;
 use App\Controller\Admin\SkillCrudController;
 use App\Controller\Admin\TechnologyCrudController;
 use App\Controller\Admin\UserCrudController;
+use App\Entity\Seo;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -58,8 +59,10 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkTo(HeroStatCrudController::class, 'Stats', 'fa fa-chart-bar');
         yield MenuItem::linkTo(HeroTypingCrudController::class, 'Phrases (typing)', 'fa fa-keyboard');
 
+    
         yield MenuItem::section('Divers');
         yield MenuItem::linkTo(SettingCrudController::class, 'Paramètres', 'fa fa-cog');
+        yield MenuItem::linkTo(SeoCrudController::class, 'SEO / GEO', 'fa fa-search')->setAction('index');
         yield MenuItem::linkTo(LegalCrudController::class, 'Mentions légales', 'fa fa-scale-balanced');
     }
 }
