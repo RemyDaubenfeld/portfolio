@@ -12,8 +12,8 @@
 
   <div class="flex flex-col gap-5">
     {% for project in projects %}
-    <div class="group bg-bg2 border border-border rounded-[10px] px-8 py-7 grid grid-cols-[300px_1fr_auto] gap-8 items-start transition-all duration-200 hover:bg-bg3 hover:border-gold-dim">
-    
+    <div class="group bg-bg2 border border-border rounded-[10px] px-8 py-7 max-md:px-5 max-md:py-6 grid grid-cols-1 md:grid-cols-[300px_1fr_auto] gap-8 items-start transition-all duration-200 hover:bg-bg3 hover:border-gold-dim">
+
     <!-- Colonne 1 : titre + image -->
     <div class="flex flex-col gap-4">
     <div class="flex items-center gap-3">
@@ -30,15 +30,15 @@
 </div>
 
     <!-- Colonne 2 : description + features + tags + liens téléchargement -->
-    <div class="flex flex-col justify-between h-full mx-3">
-        <p class="text-[0.88rem] text-text-dim font-light leading-[1.7] mt-[1.5rem] mb-[1.1rem]">
+    <div class="flex flex-col justify-between h-full md:mx-3">
+        <p class="text-[0.95rem] text-text-dim font-light leading-[1.7] mt-6 md:mt-[1.5rem] mb-[1.1rem]">
             {{ project.description }}
         </p>
 
         {% if project.features %}
         <ul class="mb-[1.1rem] flex flex-col gap-1">
             {% for feature in project.features %}
-            <li class="flex items-start gap-2 text-[0.82rem] text-text-dim font-light">
+            <li class="flex items-start gap-2 text-[0.88rem] text-text-dim font-light">
                 <span class="text-cyan mt-[0.15rem] shrink-0">›</span>
                 {{ feature }}
             </li>
@@ -48,7 +48,7 @@
 
         <div class="flex flex-wrap items-end gap-[0.6rem]">
             {% for tech in project.technologies %}
-            <span class="font-mono text-[0.63rem] text-text-mute border border-border rounded px-2 py-[0.15rem] tracking-[0.04em] transition-all duration-150 group-hover:text-cyan group-hover:border-cyan-dim">
+            <span class="font-mono text-[0.75rem] text-text-mute border border-border rounded px-2 py-[0.15rem] tracking-[0.04em] transition-all duration-150 group-hover:text-cyan group-hover:border-cyan-dim">
                 {{ tech.name }}
             </span>
             {% endfor %}
@@ -56,21 +56,21 @@
     </div>
 
     <!-- Colonne 3 : lien site ou github + lien dl -->
-    <div class="flex flex-col justify-between items-end h-full">
+    <div class="flex flex-col justify-between items-start md:items-end h-full mt-4 md:mt-0">
         {% if project.url %}
         <a href="{{ project.url }}" target="_blank"
-           class="font-mono text-[0.75rem] text-text-mute no-underline whitespace-nowrap mt-[1.5rem] transition-all duration-200 group-hover:text-gold">
+           class="font-mono text-[0.77rem] text-text-mute no-underline whitespace-nowrap mt-0 md:mt-[1.5rem] transition-all duration-200 group-hover:text-gold">
             Voir le projet ↗
         </a>
         {% elseif project.githubUrl %}
         <a href="{{ project.githubUrl }}" target="_blank"
-           class="font-mono text-[0.75rem] text-text-mute no-underline whitespace-nowrap mt-[1.5rem] transition-all duration-200 group-hover:text-gold">
+           class="font-mono text-[0.77rem] text-text-mute no-underline whitespace-nowrap mt-0 md:mt-[1.5rem] transition-all duration-200 group-hover:text-gold">
             Voir sur GitHub ↗
         </a>
         {% endif %}
 
         {% if project.links %}
-        <div class="flex flex-col items-end gap-5 mt-auto">
+        <div class="flex flex-col items-start md:items-end gap-5 mt-4 md:mt-auto">
             {% for link in project.links %}
             <a href="{{ link.url }}" target="_blank"
                class="font-mono text-[0.7rem] text-gold border border-gold-dim px-3 py-[0.3rem] tracking-[0.05em] uppercase transition-all duration-200 hover:bg-gold hover:text-bg">
@@ -80,7 +80,6 @@
         </div>
         {% endif %}
     </div>
-    
 
 </div>
     {% endfor %}

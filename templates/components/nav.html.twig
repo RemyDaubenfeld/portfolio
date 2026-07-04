@@ -1,10 +1,10 @@
 {% block nav %}
 <nav
-    class="fixed top-0 left-0 right-0 z-[100] flex items-center justify-between px-16 h-16 bg-bg/90 backdrop-blur-[14px] border-b border-border">
+    class="fixed top-0 left-0 right-0 z-[100] flex items-center justify-between px-16 h-16 max-md:px-6 bg-bg/90 backdrop-blur-[14px] border-b border-border">
     <a href="#hero" class="flex items-center gap-[0.65rem] no-underline">
         <img src="{{ asset('assets/img/logo.webp') }}" class="w-[30px] h-[30px] rounded-full"
             alt="Logo de Rémy Daubenfeld">
-        <span class="font-display text-[0.9rem] font-semibold text-text">
+        <span class="font-display text-[1.25rem] font-semibold text-text hidden sm:inline">
             Rémy
             <span class="text-gold">
                 Daubenfeld
@@ -14,31 +14,31 @@
     <ul class="flex gap-10 list-none max-md:hidden">
         <li>
             <a href="#about"
-                class="font-mono text-[0.73rem] text-text-dim no-underline tracking-[0.06em] uppercase transition-colors duration-200 hover:text-gold">
+                class="font-mono text-[0.95rem] text-text-dim no-underline tracking-[0.06em] uppercase transition-colors duration-200 hover:text-gold">
                 Profil
             </a>
         </li>
         <li>
             <a href="#skills"
-                class="font-mono text-[0.73rem] text-text-dim no-underline tracking-[0.06em] uppercase transition-colors duration-200 hover:text-gold">
+                class="font-mono text-[0.95rem] text-text-dim no-underline tracking-[0.06em] uppercase transition-colors duration-200 hover:text-gold">
                 Stack
             </a>
         </li>
         <li>
             <a href="#projects"
-                class="font-mono text-[0.73rem] text-text-dim no-underline tracking-[0.06em] uppercase transition-colors duration-200 hover:text-gold">
+                class="font-mono text-[0.95rem] text-text-dim no-underline tracking-[0.06em] uppercase transition-colors duration-200 hover:text-gold">
                 Projets
             </a>
         </li>
         <li>
             <a href="#contact"
-                class="font-mono text-[0.73rem] text-text-dim no-underline tracking-[0.06em] uppercase transition-colors duration-200 hover:text-gold">
+                class="font-mono text-[0.95rem] text-text-dim no-underline tracking-[0.06em] uppercase transition-colors duration-200 hover:text-gold">
                 Contact
             </a>
         </li>
     </ul>
     <a href="#contact"
-        class="font-mono text-[0.73rem] text-gold border border-gold-dim px-4 py-[0.42rem] no-underline tracking-[0.06em] uppercase transition-all duration-200 hover:bg-gold hover:text-bg">
+        class="font-mono text-[0.95rem] text-gold border border-gold-dim px-4 py-[0.42rem] no-underline tracking-[0.06em] uppercase transition-all duration-200 hover:bg-gold hover:text-bg">
         {{user.availability}}
     </a>
 </nav>

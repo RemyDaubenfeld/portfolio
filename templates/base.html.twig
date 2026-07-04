@@ -79,7 +79,11 @@
                 <img src="{{ vich_uploader_asset(chatbotConfig, 'iconFile') }}" alt="{{ chatbotConfig.name }}" class="w-9 h-9 rounded-full">
                 {{ chatbotConfig.name }}
             </span>
-            <button data-action="click->chat#toggle" class="bg-transparent border-none text-[var(--color-gold)] cursor-pointer text-base" aria-label="Fermer le chat">✕</button>
+            <div>
+                <button data-action="click->chat#clear" class="bg-transparent border-none text-[var(--color-gold)] cursor-pointer text-xs opacity-60 hover:opacity-100 transition-opacity mx-3" title="Effacer la conversation" aria-label="Effacer la conversation">🗑️</button>
+                <button data-action="click->chat#toggle" class="bg-transparent border-none text-[var(--color-gold)] cursor-pointer text-base" title="Fermer le chat" aria-label="Fermer le chat">✕</button>
+            </div>
+            
         </div>
 
         <div data-chat-target="messages" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3"></div>

@@ -1,0 +1,19 @@
+{% block nav %}
+<nav
+    class="fixed top-0 left-0 right-0 z-[100] flex items-center justify-between px-16 h-16 bg-bg/90 backdrop-blur-[14px] border-b border-border">
+    <a href="{{ path('app_home') }}" class="flex items-center gap-[0.65rem] no-underline">
+        <img src="{{ asset('assets/img/logo.webp') }}" class="w-[30px] h-[30px] rounded-full"
+            alt="Logo de Rémy Daubenfeld">
+        <span class="font-display text-[1.25rem] font-semibold text-text hidden sm:inline">
+            Rémy
+            <span class="text-gold">
+                Daubenfeld
+            </span>
+        </span>
+    </a>
+    
+    <a href="{{ path('app_home') }}" class="font-mono text-[0.88rem] text-text-dim no-underline tracking-[0.06em] uppercase transition-colors duration-200 hover:text-gold">
+        ← Retour
+    </a>
+</nav>
+{% endblock %}

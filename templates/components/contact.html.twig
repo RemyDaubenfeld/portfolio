@@ -10,23 +10,23 @@
                 Parlons d'un projet.
             </h2>
 
-            <p class="text-[0.95rem] text-text-dim font-light mb-10 leading-[1.75]">
+            <p class="text-[1.25rem] text-text-dim font-light mb-10 leading-[1.75]">
                 {{ user.contactTagline }}
             </p>
 
             <div class="flex flex-col gap-[0.7rem]">
-                <a href="mailto:{{ user.email }}" class="flex items-center gap-4 font-mono text-[0.8rem] text-text-dim no-underline transition-colors duration-200 hover:text-gold">
+                <a href="mailto:{{ user.email }}" class="flex items-center gap-4 font-mono text-[0.88rem] text-text-dim no-underline transition-colors duration-200 hover:text-gold">
                     <img src="{{ asset('assets/img/mail.webp') }}" alt="Mail" class="w-[1.4rem] text-text-mute not-italic"/>
                     {{ user.email }}
                 </a>
                 {% if user.linkedinUrl %}
-                <a href="{{ user.linkedinUrl }}" target="_blank" class="flex items-center gap-4 font-mono text-[0.8rem] text-text-dim no-underline transition-colors duration-200 hover:text-gold">
+                <a href="{{ user.linkedinUrl }}" target="_blank" class="flex items-center gap-4 font-mono text-[0.88rem] text-text-dim no-underline transition-colors duration-200 hover:text-gold">
                     <img src="{{ asset('assets/img/linkedin.webp') }}" alt="Linkedin" class="w-[1.4rem] text-text-mute not-italic"/>
                     {{ user.linkedinUrl|replace({'https://www.': '', 'https://': ''}) }}
                 </a>
                 {% endif %}
                 {% if user.githubUrl %}
-                <a href="{{ user.githubUrl }}" target="_blank" class="flex items-center gap-4 font-mono text-[0.8rem] text-text-dim no-underline transition-colors duration-200 hover:text-gold">
+                <a href="{{ user.githubUrl }}" target="_blank" class="flex items-center gap-4 font-mono text-[0.88rem] text-text-dim no-underline transition-colors duration-200 hover:text-gold">
                     <img src="{{ asset('assets/img/github.webp') }}" alt="Github" class="w-[1.4rem] text-text-mute not-italic"/>
                     {{ user.githubUrl|replace({'https://www.': '', 'https://': ''}) }}
                 </a>

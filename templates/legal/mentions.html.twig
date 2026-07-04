@@ -4,15 +4,7 @@
 
 {% block body %}
 
-<nav class="fixed top-0 left-0 right-0 z-[100] flex items-center justify-between px-16 h-16 bg-bg/90 backdrop-blur-[14px] border-b border-border max-md:px-6">
-    <a href="{{ path('app_home') }}" class="flex items-center gap-[0.65rem] no-underline">
-        <img src="{{ asset('assets/img/logo.webp') }}" alt="Logo RD" class="w-[30px] h-[30px] rounded-full">
-        <span class="font-display text-[0.9rem] font-semibold text-text">{{ user.firstName }}<span class="text-gold">{{ user.lastName}}</span></span>
-    </a>
-    <a href="{{ path('app_home') }}" class="font-mono text-[0.73rem] text-text-dim no-underline tracking-[0.06em] uppercase transition-colors duration-200 hover:text-gold">
-        ← Retour
-    </a>
-</nav>
+{% include 'components/nav-alt.html.twig' %}
 
 <main class="min-h-screen pt-32 pb-24 px-16 max-md:px-6">
     <div class="max-w-3xl mx-auto">
@@ -67,8 +59,21 @@
                 <h3 class="font-display text-[1rem] font-semibold mb-4 text-gold">Données personnelles</h3>
                 <p class="text-[0.9rem] text-text-dim font-light leading-[1.8]">
                     Ce site ne collecte aucune donnée personnelle via formulaire de contact.<br>
+                    Les messages saisis dans l'assistant IA sont transmis à un service tiers (Groq) et ne sont pas conservés par l'éditeur du site.<br>
                     Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, d'opposition et de suppression de vos données personnelles.
                     Vous pouvez exercer ces droits en écrivant à <a href="mailto:{{ user.email }}" class="text-text hover:text-gold transition-colors duration-200">{{ user.email }}</a>.
+                </p>
+            </div>
+
+            <div class="bg-bg2 border border-border rounded-[10px] p-8">
+                <h3 class="font-display text-[1rem] font-semibold mb-4 text-gold">Assistant IA (Stag'IA'ire)</h3>
+                <p class="text-[0.9rem] text-text-dim font-light leading-[1.8]">
+                    Ce site intègre un assistant conversationnel alimenté par l'intelligence artificielle.<br>
+                    Les messages saisis dans le chat sont transmis à l'API Groq (Groq Inc., États-Unis) pour générer les réponses.
+                    Ces données ne sont pas stockées par {{ user.firstName }} {{ user.lastName }}.<br>
+                    L'assistant IA peut produire des réponses inexactes. Les informations fournies ne constituent pas un conseil professionnel.<br>
+                    Pour en savoir plus sur le traitement des données par Groq : 
+                    <a href="https://groq.com/privacy-policy/" target="_blank" rel="noopener" class="text-text hover:text-gold transition-colors duration-200">groq.com/privacy-policy</a>
                 </p>
             </div>
 
@@ -105,6 +110,5 @@
     </div>
 </main>
 
-<footer class="px-16 py-7 flex justify-between items-center border-t border-border max-md:px-6 max-md:flex-col max-md:gap-2 max-md:text-center">
-    <span class="font-mono text-[0.65rem] text-text-mute tracking-[0.04em]">© {{ "now"|date("Y") }} {{ user.firstName }} {{ user.lastName}}</span>
+{% include 'components/footer.html.twig' %}
 {% endblock %}

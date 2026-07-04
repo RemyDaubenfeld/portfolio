@@ -38,13 +38,13 @@
         <div class="w-full grid grid-cols-2 gap-[0.65rem]">
             {% for heroStat in hero_stats %}
             <div class="bg-bg2 border border-border rounded-[10px] px-5 py-[1.4rem] flex flex-col gap-[0.4rem] transition-all duration-200 hover:bg-bg3 hover:border-gold-dim">
-                <span class="font-display text-[1.9rem] font-bold text-gold leading-none">
+                <span class="font-display text-[1.5rem] font-bold text-gold leading-none">
                     {{ heroStat.value }}
                 </span>
-                <span class="font-mono text-[0.62rem] text-text-mute uppercase tracking-[0.08em]">
+                <span class="font-mono text-[0.80rem] text-text-mute uppercase tracking-[0.08em]">
                     {{ heroStat.label }}
                 </span>
-                <span class="text-[0.78rem] text-text-dim font-light mt-[0.15rem] leading-[1.4]">
+                <span class="text-[1.10rem] text-text-dim font-light mt-[0.15rem] leading-[1.4]">
                     {{ heroStat.sub }}
                 </span>
             </div>

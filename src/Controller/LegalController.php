@@ -18,4 +18,12 @@ final class LegalController extends AbstractController
             'user'       => $userRepo->findOneBy([]),
         ]);
     }
+
+    #[Route('/confidentialite', name: 'app_confidentialite')]
+    public function confidentialite(UserRepository $userRepo): Response
+    {
+        return $this->render('legal/confidentialite.html.twig', [
+            'user' => $userRepo->findOneBy([]),
+        ]);
+    }
 }

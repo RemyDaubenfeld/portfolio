@@ -25,4 +25,7 @@ return [
     '@hotwired/turbo' => [
         'version' => '8.0.23',
     ],
+    'breakout' => [
+    'path' => './assets/js/breakout.js',
+    ],
 ];

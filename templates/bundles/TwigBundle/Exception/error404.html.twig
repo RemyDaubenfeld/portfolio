@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}404 — Page introuvable{% endblock %}
+
+{% block body %}
+
+{% include 'components/nav-alt.html.twig' %}
+
+<main class="min-h-screen pt-24 pb-16 flex flex-col items-center justify-center px-6">
+
+    <div class="text-center mb-6">
+        <p class="font-mono text-[1.3rem] text-gold uppercase tracking-[0.12em] mb-3">Erreur 404</p>
+        <h1 class="font-display text-[clamp(1.3rem,3vw,2rem)] font-bold tracking-[-0.02em] text-text mb-2">
+            Le Stag'IA'ire n'a pas trouvé votre café.
+        </h1>
+        <p class="text-[1.3rem] text-[var(--color-cyan)] font-light">
+            Cassez les briques pour rentrer à la maison.
+        </p>
+    </div>
+
+    <div class="relative">
+        <canvas
+            id="breakout"
+            width="576"
+            height="432"
+            class="block w-full max-w-[576px] h-auto rounded-xl border border-[var(--color-gold)] shadow-2xl shadow-black/50 cursor-none"
+            style="background: #0f1117;"
+        ></canvas>
+
+        <div id="overlay" class="absolute inset-0 flex flex-col items-center justify-center rounded-xl bg-black/80 backdrop-blur-sm">
+            <img src="{{ vich_uploader_asset(chatbotConfig, 'iconFile') }}" alt="Stag'IA'ire" class="w-16 h-16 rounded-full mb-4 border-2 border-[var(--color-gold)]">
+            <p class="font-display text-[1.1rem] font-semibold text-[var(--color-gold)] mb-5">{{ chatbotConfig.name }}</p>
+            <button id="startBtn" class="font-mono text-[0.75rem] uppercase tracking-[0.1em] px-6 py-2.5 bg-[var(--color-gold)] text-black rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer">
+                Lancer la partie
+            </button>
+        </div>
+
+        <div id="winOverlay" class="hidden absolute inset-0 flex flex-col items-center justify-center rounded-xl bg-black/80 backdrop-blur-sm">
+            <p class="font-display text-[1.4rem] font-bold text-[var(--color-cyan)] mb-2">☕ Café trouvé !</p>
+            <p class="text-[0.85rem] text-text-dim mb-6">Vous avez cassé toutes les briques.</p>
+            <a href="{{ path('app_home') }}" class="font-mono text-[0.75rem] uppercase tracking-[0.1em] px-6 py-2.5 bg-[var(--color-gold)] text-black rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                Retour à l'accueil
+            </a>
+        </div>
+
+        <div id="loseOverlay" class="hidden absolute inset-0 flex flex-col items-center justify-center rounded-xl bg-black/80 backdrop-blur-sm">
+            <p class="font-display text-[1.75rem] font-bold text-[var(--color-gold)] mb-2">Balle perdue !</p>
+            <p class="text-[1.25rem] text-text-dim mb-6">Le café s'est renversé...</p>
+            <button id="retryBtn" class="font-mono text-[0.75rem] uppercase tracking-[0.1em] px-6 py-2.5 bg-[var(--color-gold)] text-black rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                Réessayer
+            </button>
+        </div>
+    </div>
+
+    <p class="mt-5 font-mono text-[0.95rem] text-text-mute tracking-[0.06em]">
+        ← → pour déplacer • ESPACE ou CLICK GAUCHE pour lancer
+    </p>
+
+</main>
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="module">import 'breakout';</script>
+{% endblock %}
+
+{% endblock %}

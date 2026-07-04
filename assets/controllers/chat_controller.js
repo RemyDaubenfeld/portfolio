@@ -4,9 +4,15 @@ export default class extends Controller {
     static targets = ['input', 'messages', 'widget'];
 
     connect() {
-        this.history = [];
         this.isOpen = false;
         this.hasGreeted = false;
+        this.history = JSON.parse(sessionStorage.getItem('chat_history') ?? '[]');
+
+        const display = JSON.parse(sessionStorage.getItem('chat_display') ?? '[]');
+        if (display.length > 0) {
+            this.hasGreeted = true;
+            display.forEach(msg => this.appendMessage(msg.role, msg.text));
+        }
     }
 
     toggle() {
@@ -31,6 +37,7 @@ export default class extends Controller {
                 await this.wait(1500);
                 this.removeTypingIndicator();
                 this.appendMessage('assistant', config.introMessage1);
+                this.saveDisplay('assistant', config.introMessage1)
             }
 
             if (config.introMessage2) {
@@ -38,6 +45,7 @@ export default class extends Controller {
                 await this.wait(1800);
                 this.removeTypingIndicator();
                 this.appendMessage('assistant', config.introMessage2);
+                this.saveDisplay('assistant', config.introMessage2)
             }
         } catch (e) {
             // Silencieux si l'API config échoue
@@ -55,7 +63,9 @@ export default class extends Controller {
 
         this.inputTarget.value = '';
         this.appendMessage('user', text);
+        this.saveDisplay('user', text);
         this.history.push({ role: 'user', content: text });
+        sessionStorage.setItem('chat_history', JSON.stringify(this.history));
 
         this.appendMessage('assistant', '☕', true);
 
@@ -71,7 +81,10 @@ export default class extends Controller {
 
             this.removeTypingIndicator();
             this.history.push({ role: 'assistant', content: reply });
+            sessionStorage.setItem('chat_history', JSON.stringify(this.history));
             this.appendMessage('assistant', reply);
+            this.saveDisplay('assistant', reply);
+
         } catch (error) {
             this.removeTypingIndicator();
             this.appendMessage('assistant', "Le stag'IA'ire est parti chercher du café... et ne revient plus. Réessaie plus tard.");
@@ -98,5 +111,20 @@ export default class extends Controller {
     removeTypingIndicator() {
         const typing = this.messagesTarget.querySelector('[data-typing="true"]');
         if (typing) typing.remove();
+    }
+
+    saveDisplay(role, text) {
+        const display = JSON.parse(sessionStorage.getItem('chat_display') ?? '[]');
+        display.push({ role, text });
+        sessionStorage.setItem('chat_display', JSON.stringify(display));
+    }
+
+    clear() {
+        sessionStorage.removeItem('chat_history');
+        sessionStorage.removeItem('chat_display');
+        this.history = [];
+        this.messagesTarget.innerHTML = '';
+        this.hasGreeted = false;
+        this.playIntro();
     }
 }

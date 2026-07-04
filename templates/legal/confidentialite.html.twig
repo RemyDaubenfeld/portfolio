@@ -1,0 +1,132 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Politique de confidentialité — {{ user.firstName }} {{ user.lastName }}{% endblock %}
+
+{% block body %}
+
+{% include 'components/nav-alt.html.twig' %}
+
+<main class="min-h-screen pt-32 pb-24 px-16 max-md:px-6">
+    <div class="max-w-3xl mx-auto">
+
+        <div class="mb-14">
+            <p class="eyebrow-line font-mono text-[0.68rem] text-gold uppercase tracking-[0.12em] mb-4 flex items-center gap-3">
+                Légal
+            </p>
+            <h1 class="font-display text-[clamp(2rem,4vw,3rem)] font-bold tracking-[-0.02em] leading-[1.1]">
+                Politique de confidentialité
+            </h1>
+        </div>
+
+        <div class="flex flex-col gap-10">
+
+            <div class="bg-bg2 border border-border rounded-[10px] p-8">
+                <h3 class="font-display text-[1rem] font-semibold mb-4 text-gold">Responsable du traitement</h3>
+                <p class="text-[0.9rem] text-text-dim font-light leading-[1.8]">
+                    {{ user.firstName }} {{ user.lastName }}<br>
+                    Développeur Web — Portfolio personnel<br>
+                    Contact : <a href="mailto:{{ user.email }}" class="text-text hover:text-gold transition-colors duration-200">{{ user.email }}</a>
+                </p>
+            </div>
+
+            <div class="bg-bg2 border border-border rounded-[10px] p-8">
+                <h3 class="font-display text-[1rem] font-semibold mb-4 text-gold">Données collectées</h3>
+                <p class="text-[0.9rem] text-text-dim font-light leading-[1.8]">
+                    Ce site ne collecte aucune donnée personnelle via formulaire de contact, cookies publicitaires ou outils de tracking.<br><br>
+                    Les seules données traitées sont les suivantes :
+                </p>
+                <ul class="mt-4 flex flex-col gap-2 text-[0.9rem] text-text-dim font-light leading-[1.8] list-none pl-0">
+                    <li class="flex items-start gap-3">
+                        <span class="text-gold mt-1">—</span>
+                        <span><strong class="text-text font-medium">Logs serveur</strong> : adresse IP, heure de connexion, page visitée. Conservés 30 jours à des fins de sécurité et de débogage. Ces données ne sont pas exploitées à des fins commerciales.</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-gold mt-1">—</span>
+                        <span><strong class="text-text font-medium">Messages de l'assistant IA</strong> : les messages saisis dans le chat {{ chatbotConfig.name }} sont transmis à l'API Groq pour générer une réponse. Ces messages ne sont pas stockés par l'éditeur du site.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="bg-bg2 border border-border rounded-[10px] p-8">
+                <h3 class="font-display text-[1rem] font-semibold mb-4 text-gold">Assistant IA — {{ chatbotConfig.name }}</h3>
+                <p class="text-[0.9rem] text-text-dim font-light leading-[1.8]">
+                    Ce site intègre un assistant conversationnel propulsé par l'intelligence artificielle.<br><br>
+                    Lorsque vous interagissez avec le {{ chatbotConfig.name }}, vos messages sont transmis à <strong class="text-text font-medium">Groq Inc.</strong> (États-Unis) via leur API, afin de générer une réponse automatisée.<br><br>
+                    <strong class="text-text font-medium">Ce que l'éditeur ne fait pas :</strong>
+                </p>
+                <ul class="mt-3 mb-4 flex flex-col gap-2 text-[0.9rem] text-text-dim font-light leading-[1.8] list-none pl-0">
+                    <li class="flex items-start gap-3">
+                        <span class="text-gold mt-1">—</span>
+                        <span>Stocker vos messages ou l'historique de conversation</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-gold mt-1">—</span>
+                        <span>Utiliser vos messages à des fins commerciales ou publicitaires</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-gold mt-1">—</span>
+                        <span>Partager vos messages avec des tiers autres que Groq pour le traitement IA</span>
+                    </li>
+                </ul>
+                <p class="text-[0.9rem] text-text-dim font-light leading-[1.8]">
+                    Le traitement des données par Groq est soumis à leur propre politique de confidentialité :<br>
+                    <a href="https://groq.com/privacy-policy/" target="_blank" rel="noopener" class="text-text hover:text-gold transition-colors duration-200">groq.com/privacy-policy</a>
+                </p>
+                <p class="mt-4 text-[0.9rem] text-text-dim font-light leading-[1.8]">
+                    <strong class="text-text font-medium">Recommandation :</strong> évitez de saisir des informations personnelles sensibles (nom complet, adresse, numéro de téléphone, etc.) dans le chat.
+                </p>
+            </div>
+
+            <div class="bg-bg2 border border-border rounded-[10px] p-8">
+                <h3 class="font-display text-[1rem] font-semibold mb-4 text-gold">Transfert de données hors UE</h3>
+                <p class="text-[0.9rem] text-text-dim font-light leading-[1.8]">
+                    Les messages transmis à Groq sont traités sur des serveurs situés aux États-Unis.<br>
+                    Ce transfert est encadré par les clauses contractuelles types de la Commission européenne (CCT) acceptées par Groq.<br>
+                    Pour plus d'informations : <a href="https://groq.com/privacy-policy/" target="_blank" rel="noopener" class="text-text hover:text-gold transition-colors duration-200">politique de confidentialité de Groq</a>.
+                </p>
+            </div>
+
+            <div class="bg-bg2 border border-border rounded-[10px] p-8">
+                <h3 class="font-display text-[1rem] font-semibold mb-4 text-gold">Cookies</h3>
+                <p class="text-[0.9rem] text-text-dim font-light leading-[1.8]">
+                    Ce site n'utilise pas de cookies publicitaires, de traceurs tiers ou d'outils d'analyse de trafic (Google Analytics, etc.).<br>
+                    Un cookie de session peut être utilisé à des fins techniques strictement nécessaires au fonctionnement du site. Il est supprimé à la fermeture du navigateur.
+                </p>
+            </div>
+
+            <div class="bg-bg2 border border-border rounded-[10px] p-8">
+                <h3 class="font-display text-[1rem] font-semibold mb-4 text-gold">Vos droits</h3>
+                <p class="text-[0.9rem] text-text-dim font-light leading-[1.8]">
+                    Conformément au Règlement Général sur la Protection des Données (RGPD — Règlement UE 2016/679), vous disposez des droits suivants :
+                </p>
+                <ul class="mt-4 flex flex-col gap-2 text-[0.9rem] text-text-dim font-light leading-[1.8] list-none pl-0">
+                    <li class="flex items-start gap-3"><span class="text-gold mt-1">—</span><span><strong class="text-text font-medium">Droit d'accès</strong> : connaître les données vous concernant</span></li>
+                    <li class="flex items-start gap-3"><span class="text-gold mt-1">—</span><span><strong class="text-text font-medium">Droit de rectification</strong> : corriger des données inexactes</span></li>
+                    <li class="flex items-start gap-3"><span class="text-gold mt-1">—</span><span><strong class="text-text font-medium">Droit à l'effacement</strong> : demander la suppression de vos données</span></li>
+                    <li class="flex items-start gap-3"><span class="text-gold mt-1">—</span><span><strong class="text-text font-medium">Droit d'opposition</strong> : vous opposer à un traitement</span></li>
+                    <li class="flex items-start gap-3"><span class="text-gold mt-1">—</span><span><strong class="text-text font-medium">Droit à la portabilité</strong> : recevoir vos données dans un format structuré</span></li>
+                </ul>
+                <p class="mt-4 text-[0.9rem] text-text-dim font-light leading-[1.8]">
+                    Pour exercer ces droits, contactez : <a href="mailto:{{ user.email }}" class="text-text hover:text-gold transition-colors duration-200">{{ user.email }}</a><br>
+                    En cas de désaccord, vous pouvez introduire une réclamation auprès de la <a href="https://www.cnil.fr" target="_blank" rel="noopener" class="text-text hover:text-gold transition-colors duration-200">CNIL</a>.
+                </p>
+            </div>
+
+            <div class="bg-bg2 border border-border rounded-[10px] p-8">
+                <h3 class="font-display text-[1rem] font-semibold mb-4 text-gold">Modifications</h3>
+                <p class="text-[0.9rem] text-text-dim font-light leading-[1.8]">
+                    Cette politique de confidentialité peut être mise à jour à tout moment, notamment en cas d'évolution des services proposés ou de la réglementation applicable.
+                    La date de dernière mise à jour est indiquée ci-dessous.
+                </p>
+            </div>
+
+            <p class="font-mono text-[0.65rem] text-text-mute tracking-[0.04em]">
+                Dernière mise à jour : {{ "now"|date("d/m/Y") }}
+            </p>
+
+        </div>
+    </div>
+</main>
+
+{% include 'components/footer.html.twig' %}
+{% endblock %}
