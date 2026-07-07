@@ -3,6 +3,8 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Project;
+use App\Form\ProjectLinkType;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
@@ -62,7 +64,13 @@ class ProjectCrudController extends AbstractCrudController
             ->hideOnIndex();
 
         yield ArrayField::new('features', 'Fonctionnalités')->hideOnIndex();
-        yield ArrayField::new('links', 'Liens supplémentaires')->hideOnIndex();
+        yield CollectionField::new('links', 'Liens supplémentaires')
+            ->setEntryType(ProjectLinkType::class)
+            ->setFormTypeOptions(['by_reference' => false])
+            ->allowAdd()
+            ->allowDelete()
+            ->setEntryIsComplex()
+            ->hideOnIndex();
 
         yield IntegerField::new('sortOrder', 'Ordre');
         yield DateTimeField::new('createdAt', 'Créé le')->hideOnForm();
