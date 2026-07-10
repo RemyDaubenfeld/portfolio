@@ -15,7 +15,7 @@ class SeoFilesController extends AbstractController
     #[Route('/sitemap.xml', name: 'sitemap')]
     public function sitemap(): Response
     {
-        $seo = $this->seoRepository->findOneBy([]);
+        $seo = $this->seoRepository->findByPageKey(null);
 
         if (!$seo?->isSitemapEnabled()) {
             throw $this->createNotFoundException();
@@ -31,7 +31,7 @@ class SeoFilesController extends AbstractController
     #[Route('/robots.txt', name: 'robots')]
     public function robots(): Response
     {
-        $seo = $this->seoRepository->findOneBy([]);
+        $seo = $this->seoRepository->findByPageKey(null);
         $content = $seo?->getRobotsTxt()
             ?? "User-agent: *\nAllow: /\nSitemap: https://remy-daubenfeld.fr/sitemap.xml";
 
@@ -41,7 +41,7 @@ class SeoFilesController extends AbstractController
     #[Route('/llms.txt', name: 'llms')]
     public function llms(): Response
     {
-        $seo = $this->seoRepository->findOneBy([]);
+        $seo = $this->seoRepository->findByPageKey(null);
         $content = $seo?->getLlmsTxt() ?? '';
 
         return new Response($content, 200, ['Content-Type' => 'text/plain']);

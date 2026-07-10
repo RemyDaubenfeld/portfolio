@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 use App\Entity\Seo;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
@@ -17,6 +18,16 @@ class SeoCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
+            ChoiceField::new('pageKey', 'Page')
+                ->setChoices([
+                    'Global (par défaut)' => null,
+                    'Accueil' => 'app_home',
+                    'CV' => 'app_cv',
+                    'Mentions légales' => 'app_mentions_legales',
+                    'Confidentialité' => 'app_confidentialite',
+                ])
+                ->setHelp('Config appliquée à cette page précise. "Global" sert de secours et alimente le sitemap/robots.txt/llms.txt'),
+
             // Meta classiques
             TextField::new('metaTitle', 'Titre SEO')
                 ->setHelp('Max 160 caractères'),

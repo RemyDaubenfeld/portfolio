@@ -12,4 +12,9 @@ class SeoRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Seo::class);
     }
+
+    public function findByPageKey(?string $pageKey): ?Seo
+    {
+        return $this->findOneBy(['pageKey' => $pageKey]);
+    }
 }

@@ -17,15 +17,15 @@
         <meta name="robots" content="{{ seo_config.robotsDirective ?? 'index,follow' }}">
 
         {# Canonical #}
-        {% if seo_config.canonicalUrl %}
-            <link rel="canonical" href="{{ seo_config.canonicalUrl }}">
+        {% if seo_canonical_url %}
+            <link rel="canonical" href="{{ seo_canonical_url }}">
         {% endif %}
 
         {# Open Graph #}
         <meta property="og:type" content="website">
         <meta property="og:title" content="{{ seo_config.ogTitle ?? seo_config.metaTitle ?? 'Rémy Daubenfeld' }}">
         <meta property="og:description" content="{{ seo_config.ogDescription ?? seo_config.metaDescription }}">
-        <meta property="og:url" content="{{ seo_config.canonicalUrl ?? 'https://remy-daubenfeld.fr' }}">
+        <meta property="og:url" content="{{ seo_canonical_url ?? 'https://remy-daubenfeld.fr' }}">
         {% if seo_config.ogImage %}
             <meta property="og:image" content="{{ seo_config.ogImage }}">
         {% endif %}
@@ -73,7 +73,7 @@
         <img src="{{ vich_uploader_asset(chatbotConfig, 'iconFile') }}" alt="{{ chatbotConfig.name }}" class="w-full h-full object-cover">
     </button>
 
-    <div data-chat-target="widget" class="hidden fixed bottom-24 right-8 w-100 h-[480px] bg-[#1a1a1a] border border-[var(--color-gold)] rounded-2xl flex flex-col z-[1000] shadow-2xl shadow-black/50">
+    <div data-chat-target="widget" class="hidden fixed bottom-24 right-8 w-[calc(100vw-4rem)] max-w-96 h-[480px] bg-[#1a1a1a] border border-[var(--color-gold)] rounded-2xl flex flex-col z-[1000] shadow-2xl shadow-black/50">
         <div class="px-4 py-3 border-b border-[var(--color-gold)] flex justify-between items-center text-[var(--color-gold)] font-semibold">
             <span class="flex items-center gap-2">
                 <img src="{{ vich_uploader_asset(chatbotConfig, 'iconFile') }}" alt="{{ chatbotConfig.name }}" class="w-9 h-9 rounded-full">

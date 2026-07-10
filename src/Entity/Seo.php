@@ -27,7 +27,11 @@ class Seo
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $canonicalUrl = null;
-    
+
+    // Identifie la page rattachée à cette config (nom de route Symfony), null = config globale/par défaut
+    #[ORM\Column(type: 'string', length: 50, nullable: true, unique: true)]
+    private ?string $pageKey = null;
+
     // Open Graph
     #[ORM\Column(type: 'string', length: 160, nullable: true)]
     private ?string $ogTitle = null;
@@ -118,14 +122,26 @@ class Seo
         return $this->canonicalUrl; 
     }
     
-    public function setCanonicalUrl(?string $v): static 
-    { 
-        $this->canonicalUrl = $v; 
-        
-        return $this; 
+    public function setCanonicalUrl(?string $v): static
+    {
+        $this->canonicalUrl = $v;
+
+        return $this;
     }
 
-    public function getOgTitle(): ?string 
+    public function getPageKey(): ?string
+    {
+        return $this->pageKey;
+    }
+
+    public function setPageKey(?string $v): static
+    {
+        $this->pageKey = $v;
+
+        return $this;
+    }
+
+    public function getOgTitle(): ?string
     { 
         return $this->ogTitle; 
     }
