@@ -19,7 +19,7 @@ security:
             pattern: ^/(_profiler|_wdt|assets|build)/
             security: false
         admin:
-            pattern: ^/admin
+            pattern: ^/(admin|job-search)
             lazy: true
             provider: admin_provider
             form_login:
@@ -43,6 +43,7 @@ security:
     # Note: Only the *first* matching rule is applied
     access_control:
         - { path: ^/admin/login, roles: PUBLIC_ACCESS }
+        - { path: ^/job-search, roles: ROLE_ADMIN }
         - { path: ^/admin, roles: ROLE_ADMIN }
 
 when@test:
