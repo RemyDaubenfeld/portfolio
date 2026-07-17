@@ -37,10 +37,24 @@ class JobOfferApiController
             }
         }
 
+        // --- Clé d'identification externe, envoyée par n8n selon la source ---
+        // LinkedIn : linkedinJobId (le plus fiable)
+        // Indeed / HelloWork : dedupFallback (hash titre+entreprise, en secours)
+        $externalId = $data['linkedinJobId'] ?? $data['dedupFallback'] ?? null;
+
         $hash = md5($data['url']);
 
         // --- Dédoublonnage ---
-        $existing = $repository->findOneBy(['hash' => $hash]);
+        $existing = null;
+
+        if ($externalId !== null) {
+            $existing = $repository->findOneBy(['externalId' => $externalId]);
+        }
+
+        if (!$existing) {
+            $existing = $repository->findOneBy(['hash' => $hash]);
+        }
+
         if ($existing) {
             return new JsonResponse(['status' => 'duplicate', 'id' => $existing->getId()], 200);
         }
@@ -51,6 +65,7 @@ class JobOfferApiController
         $offer->setLocation($data['location'] ?? null);
         $offer->setSource($data['source']);
         $offer->setUrl($data['url']);
+        $offer->setExternalId($externalId);
         $offer->setApplicationStatus(JobOfferStatus::ToReview);
         $offer->setDescription($data['description'] ?? null);
 
@@ -58,7 +73,6 @@ class JobOfferApiController
             try {
                 $offer->setPublishedAt(new \DateTimeImmutable($data['publishedAt']));
             } catch (\Exception) {
-            
             }
         }
 

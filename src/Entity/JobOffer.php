@@ -25,11 +25,14 @@ class JobOffer
     #[ORM\Column(length: 50)]
     private string $source;
 
-    #[ORM\Column(length: 500)]
+    #[ORM\Column(type: 'text')]
     private string $url;
 
     #[ORM\Column(length: 32, unique: true)]
     private string $hash;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $externalId = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $publishedAt = null;
@@ -129,6 +132,19 @@ class JobOffer
     public function getHash(): string 
     { 
         return $this->hash; 
+    }
+
+    public function getExternalId(): ?string
+    {
+        return $this->externalId;
+    }
+
+
+    public function setExternalId(?string $externalId): static
+    {
+        $this->externalId = $externalId;
+
+        return $this;
     }
 
     public function getPublishedAt(): ?\DateTimeImmutable 
