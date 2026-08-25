@@ -29,7 +29,19 @@ class DashboardController extends AbstractDashboardController
 {
     public function index(): Response
     {
-        return $this->render('admin/dashboard.html.twig');
+        return $this->render('admin/dashboard.html.twig', [
+            'links' => [
+                ['label' => 'Profil', 'icon' => 'fa fa-user', 'controller' => UserCrudController::class],
+                ['label' => 'Projets', 'icon' => 'fa fa-code', 'controller' => ProjectCrudController::class],
+                ['label' => 'Skills', 'icon' => 'fa fa-star', 'controller' => SkillCrudController::class],
+                ['label' => 'Catégories', 'icon' => 'fa fa-folder', 'controller' => SkillCategoryCrudController::class],
+                ['label' => 'Technologies', 'icon' => 'fa fa-wrench', 'controller' => TechnologyCrudController::class],
+                ['label' => 'Stats hero', 'icon' => 'fa fa-chart-bar', 'controller' => HeroStatCrudController::class],
+                ['label' => 'Phrases typing', 'icon' => 'fa fa-keyboard', 'controller' => HeroTypingCrudController::class],
+                ['label' => 'Paramètres', 'icon' => 'fa fa-cog', 'controller' => SettingCrudController::class],
+                ['label' => 'Mentions légales', 'icon' => 'fa fa-scale-balanced', 'controller' => LegalCrudController::class],
+            ],
+        ]);
     }
 
     public function configureDashboard(): Dashboard

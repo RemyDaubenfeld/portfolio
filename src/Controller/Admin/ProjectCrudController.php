@@ -73,6 +73,13 @@ class ProjectCrudController extends AbstractCrudController
             ->hideOnIndex();
 
         yield IntegerField::new('sortOrder', 'Ordre');
+
+        yield BooleanField::new('showOnCv', 'Afficher sur le CV');
+        yield TextareaField::new('cvDescription', 'Descriptif CV')
+            ->setNumOfRows(3)
+            ->setHelp('Descriptif court affiché dans le CV. Rempli uniquement si le projet apparaît sur le CV.')
+            ->hideOnIndex();
+
         yield DateTimeField::new('createdAt', 'Créé le')->hideOnForm();
     }
 }

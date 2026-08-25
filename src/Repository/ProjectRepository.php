@@ -21,6 +21,15 @@ class ProjectRepository extends ServiceEntityRepository
         parent::__construct($registry, Project::class);
     }
 
+    public function findForCv(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.showOnCv = true')
+            ->orderBy('p.sortOrder', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Project[] Returns an array of Project objects
 //     */

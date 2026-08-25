@@ -16,7 +16,13 @@ class JobSearchDashboardController extends AbstractDashboardController
 {   
     public function index(): Response
     {
-        return $this->render('admin/dashboard.html.twig');
+        return $this->render('admin/dashboard.html.twig', [
+            'links' => [
+                ['label' => "Offres d'emploi", 'icon' => 'fa fa-briefcase', 'controller' => JobOfferCrudController::class],
+                ['label' => 'Mots-clés', 'icon' => 'fa fa-tags', 'controller' => SearchCriteriaCrudController::class],
+                ['label' => 'Codes ROME', 'icon' => 'fa fa-sitemap', 'controller' => RomeCodeCrudController::class],
+            ],
+        ]);
     }
 
     public function configureDashboard(): Dashboard

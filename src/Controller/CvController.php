@@ -6,6 +6,7 @@ use App\Repository\EducationRepository;
 use App\Repository\ExperienceRepository;
 use App\Repository\InterestRepository;
 use App\Repository\LanguageRepository;
+use App\Repository\ProjectRepository;
 use App\Repository\SkillCategoryRepository;
 use App\Repository\UserRepository;
 use Dompdf\Dompdf;
@@ -24,16 +25,18 @@ final class CvController extends AbstractController
         LanguageRepository $languageRepo,
         SkillCategoryRepository $skillCatRepo,
         InterestRepository $interestRepo,
+        ProjectRepository $projectRepo,
     ): Response {
         return $this->render(
-            'cv/index.html.twig', 
+            'cv/index.html.twig',
             $this->getData(
-            $userRepo, 
-            $experienceRepo, 
-            $educationRepo, 
-            $languageRepo, 
-            $skillCatRepo, 
+            $userRepo,
+            $experienceRepo,
+            $educationRepo,
+            $languageRepo,
+            $skillCatRepo,
             $interestRepo,
+            $projectRepo,
             )
         );
     }
@@ -46,17 +49,19 @@ final class CvController extends AbstractController
         LanguageRepository $languageRepo,
         SkillCategoryRepository $skillCatRepo,
         InterestRepository $interestRepo,
+        ProjectRepository $projectRepo,
     ): Response {
         $html = $this->renderView(
-            'cv/pdf.html.twig', 
+            'cv/pdf.html.twig',
             $this->getData(
-                $userRepo, 
-                $experienceRepo, 
-                $educationRepo, 
-                $languageRepo, 
-                $skillCatRepo, 
+                $userRepo,
+                $experienceRepo,
+                $educationRepo,
+                $languageRepo,
+                $skillCatRepo,
                 $interestRepo,
-        
+                $projectRepo,
+
         #return $this->render('cv/pdf.html.twig', $this->getData(
         #$userRepo, $experienceRepo, $educationRepo, $languageRepo, $skillCatRepo, $interestRepo,
             )
@@ -90,6 +95,7 @@ final class CvController extends AbstractController
     LanguageRepository $languageRepo,
     SkillCategoryRepository $skillCatRepo,
     InterestRepository $interestRepo,
+    ProjectRepository $projectRepo,
 ): array {
     $user = $userRepo->findOneBy([]);
 
@@ -108,6 +114,7 @@ if ($user?->getBirthDate()) {
         'languages'   => $languageRepo->findAllOrdered(),
         'skill_cats'  => $skillCatRepo->findBy([], ['sortOrder' => 'ASC']),
         'interests'   => $interestRepo->findForCv(),
+        'projects'    => $projectRepo->findForCv(),
     ];
 }
 }

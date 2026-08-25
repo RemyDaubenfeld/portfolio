@@ -41,7 +41,8 @@
         .bio-dim { color: #555; font-size: 8pt; line-height: 1.5; }
 
         .timeline-item { margin-bottom: 6px; padding-left: 12px; border-left: 2px solid #e8e0d0; }
-        .timeline-item-edu { margin-bottom: 6px; padding-left: 12px; border-left: 2px solid #c8ede8; }
+        .timeline-item-project { margin-bottom: 6px; padding-left: 12px; border-left: 2px solid #c8ede8; }
+        .timeline-item-edu { margin-bottom: 6px; padding-left: 12px; border-left: 2px solid #e8e0d0; }
         .item-header { display: table; width: 100%; }
         .item-left { display: table-cell; vertical-align: top; }
         .item-right { display: table-cell; text-align: right; vertical-align: top; white-space: nowrap; }
@@ -50,6 +51,10 @@
         .item-dates { font-size: 7pt; color: #888; }
         .item-type { font-size: 7pt; color: #aaa; text-transform: capitalize; }
         .item-desc { font-size: 8pt; color: #555; line-height: 1.5; margin-top: 4px; }
+        .project-item { margin-bottom: 8px; }
+        .project-header { display: table; width: 100%; }
+        .project-title { display: table-cell; font-size: 9.5pt; font-weight: bold; color: #1a1a1a; }
+        .project-link { display: table-cell; text-align: right; font-size: 7.5pt; color: #4EC9B0; white-space: nowrap; }
     </style>
 </head>
 <body>
@@ -87,12 +92,6 @@
             </div>
         {% endif %}
 
-        {% if age %}
-            <div class="contact-item">
-                <span class="icon"><img src="{{ absolute_url(asset('assets/img/cv/age.webp')) }}" alt="age"></span>
-                {{ age }} ans
-            </div>
-        {% endif %}
         
         {% if user.drivingLicense %}
             <div class="contact-item">
@@ -173,13 +172,30 @@
                 <div class="timeline-item">
                     <div class="item-header">
                         <div>
-                            <div class="item-dates">{{ exp.startDate }} → {{ exp.endDate ?? "Aujourd'hui" }}</div>
                             <div class="item-title">{{ exp.title }}</div>
+                            <div class="item-dates">{{ exp.startDate }} → {{ exp.endDate ?? "Aujourd'hui" }}</div>
                             <div class="item-company">{{ exp.company }}{% if exp.location %} — {{ exp.location }}{% endif %}</div>
                         </div>
                     </div>
                     {% if exp.description %}
                         <div class="item-desc">{{ exp.description }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if projects %}
+            <div class="section-title-right">Projets personnels</div>
+            {% for project in projects %}
+                <div class="timeline-item-project">
+                    <div class="item-header">
+                        <div class="project-title">{{ project.title }}</div>
+                        {% if project.githubUrl %}
+                            <div class="project-link">{{ project.githubUrl|replace({'https://github.com/': '', 'http://github.com/': ''}) }}</div>
+                        {% endif %}
+                    </div>
+                    {% if project.cvDescription %}
+                        <div class="item-desc">{{ project.cvDescription }}</div>
                     {% endif %}
                 </div>
             {% endfor %}
@@ -191,8 +207,8 @@
                 <div class="timeline-item-edu">
                     <div class="item-header">
                         <div>
-                            <div class="item-dates">{{ edu.startDate }} → {{ edu.endDate ?? "Aujourd'hui" }}</div>
                             <div class="item-title">{{ edu.title }}</div>
+                            <div class="item-dates">{{ edu.startDate }} → {{ edu.endDate ?? "Aujourd'hui" }}</div>
                             <div class="item-company">{{ edu.institution }}{% if edu.location %} — {{ edu.location }}{% endif %}</div>
                         </div>
                     </div>

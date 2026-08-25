@@ -54,6 +54,12 @@ class Project
     #[ORM\Column(name: "sort_order", options: ["default" => 0])]
     private ?int $sortOrder = 0;
 
+    #[ORM\Column(name: "show_on_cv", type: Types::BOOLEAN, options: ["default" => false])]
+    private ?bool $showOnCv = false;
+
+    #[ORM\Column(name: "cv_description", type: Types::TEXT, nullable: true)]
+    private ?string $cvDescription = null;
+
     #[ORM\Column(name: "created_at", type: Types::DATETIME_MUTABLE, nullable: true, options: ["default" => 'CURRENT_TIMESTAMP'])]
     private ?\DateTimeInterface $createdAt = null;
 
@@ -187,6 +193,28 @@ class Project
     public function setSortOrder(int $sortOrder): static
     {
         $this->sortOrder = $sortOrder;
+        return $this;
+    }
+
+    public function isShowOnCv(): bool
+    {
+        return $this->showOnCv;
+    }
+
+    public function setShowOnCv(bool $showOnCv): static
+    {
+        $this->showOnCv = $showOnCv;
+        return $this;
+    }
+
+    public function getCvDescription(): ?string
+    {
+        return $this->cvDescription;
+    }
+
+    public function setCvDescription(?string $cvDescription): static
+    {
+        $this->cvDescription = $cvDescription;
         return $this;
     }
 

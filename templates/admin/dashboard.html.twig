@@ -5,20 +5,8 @@
 {% block main %}
 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;padding:1rem 0;">
 
-    {% set links = [
-        { label: 'Profil',           icon: 'fa fa-user',           entity: 'App\\Entity\\User' },
-        { label: 'Projets',          icon: 'fa fa-code',           entity: 'App\\Entity\\Project' },
-        { label: 'Skills',           icon: 'fa fa-star',           entity: 'App\\Entity\\Skill' },
-        { label: 'Catégories',       icon: 'fa fa-folder',         entity: 'App\\Entity\\SkillCategory' },
-        { label: 'Technologies',     icon: 'fa fa-wrench',         entity: 'App\\Entity\\Technology' },
-        { label: 'Stats hero',       icon: 'fa fa-chart-bar',      entity: 'App\\Entity\\HeroStat' },
-        { label: 'Phrases typing',   icon: 'fa fa-keyboard',       entity: 'App\\Entity\\HeroTyping' },
-        { label: 'Paramètres',       icon: 'fa fa-cog',            entity: 'App\\Entity\\Setting' },
-        { label: 'Mentions légales', icon: 'fa fa-scale-balanced', entity: 'App\\Entity\\Legal' },
-    ] %}
-
     {% for item in links %}
-    <a href="{{ ea_url().setController(item.entity) }}"
+    <a href="{{ ea_url().setController(item.controller) }}"
        onmouseover="this.style.opacity='.75'"
        onmouseout="this.style.opacity='1'"
        style="display:flex;flex-direction:column;align-items:center;justify-content:center;
