@@ -31,7 +31,7 @@ class JobOfferApiController
         }
 
         // --- Validation minimale des champs requis ---
-        foreach (['title', 'company', 'source', 'url'] as $field) {
+        foreach (['title', 'source', 'url'] as $field) {
             if (empty($data[$field])) {
                 return new JsonResponse(['error' => "Missing field: $field"], 400);
             }
@@ -61,7 +61,7 @@ class JobOfferApiController
 
         $offer = new JobOffer();
         $offer->setTitle($data['title']);
-        $offer->setCompany($data['company']);
+        $offer->setCompany($data['company'] ?? null);
         $offer->setLocation($data['location'] ?? null);
         $offer->setSource($data['source']);
         $offer->setUrl($data['url']);

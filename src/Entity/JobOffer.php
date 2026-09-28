@@ -16,8 +16,8 @@ class JobOffer
     #[ORM\Column(length: 255)]
     private string $title;
 
-    #[ORM\Column(length: 255)]
-    private string $company;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $company = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $location = null;
@@ -83,12 +83,12 @@ class JobOffer
         return $this; 
     }
 
-    public function getCompany(): string 
+    public function getCompany(): ?string 
     { 
         return $this->company; 
     }
     
-    public function setCompany(string $company): static 
+    public function setCompany(?string $company): static 
     { 
         $this->company = $company; 
         

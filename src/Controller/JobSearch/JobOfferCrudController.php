@@ -48,6 +48,8 @@ class JobOfferCrudController extends AbstractCrudController
                 'France Travail' => 'france_travail',
                 'Indeed' => 'indeed',
                 'LinkedIn' => 'linkedin',
+                'Hello Work' => 'hellowork',
+                'Free-Work' => 'freework'
             ]);
         yield UrlField::new('url', 'Lien');
         yield DateTimeField::new('publishedAt', 'Publiée le');

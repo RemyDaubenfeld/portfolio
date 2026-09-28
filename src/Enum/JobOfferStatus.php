@@ -10,6 +10,7 @@ enum JobOfferStatus: string
     case Interview = 'interview';
     case Rejected = 'rejected';
     case Accepted = 'accepted';
+    case NotInterested = 'not_interested';
 
     public function label(): string
     {
@@ -20,6 +21,7 @@ enum JobOfferStatus: string
             self::Interview => 'Entretien',
             self::Rejected => 'Refusé',
             self::Accepted => 'Accepté',
+            self::NotInterested => "Pas intéressé",
         };
     }
 
@@ -32,6 +34,7 @@ enum JobOfferStatus: string
             self::Interview => 'primary',
             self::Rejected => 'danger',
             self::Accepted => 'success',
+            self::NotInterested => 'info',
         };
     }
 }
