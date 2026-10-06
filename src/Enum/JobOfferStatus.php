@@ -34,7 +34,7 @@ enum JobOfferStatus: string
             self::Interview => 'primary',
             self::Rejected => 'danger',
             self::Accepted => 'success',
-            self::NotInterested => 'info',
+            self::NotInterested => 'dark',
         };
     }
 }

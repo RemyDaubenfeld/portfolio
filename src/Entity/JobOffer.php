@@ -19,6 +19,10 @@ class JobOffer
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $company = null;
 
+    #[ORM\ManyToOne(inversedBy: 'jobOffers')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?Company $linkedCompany = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $location = null;
 
@@ -93,6 +97,18 @@ class JobOffer
         $this->company = $company; 
         
         return $this; 
+    }
+
+    public function getLinkedCompany(): ?Company
+    {
+        return $this->linkedCompany;
+    }
+
+    public function setLinkedCompany(?Company $linkedCompany): static
+    {
+        $this->linkedCompany = $linkedCompany;
+
+        return $this;
     }
 
     public function getLocation(): ?string 
@@ -205,5 +221,15 @@ class JobOffer
         $this->createdAt = $createdAt; 
         
         return $this; 
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function __toString(): string
+    {
+        return $this->company ? sprintf('%s — %s', $this->title, $this->company) : $this->title;
     }
 }

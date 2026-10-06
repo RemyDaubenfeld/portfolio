@@ -4,6 +4,7 @@ namespace App\Controller\JobSearch;
 use App\Entity\JobOffer;
 use App\Enum\JobOfferStatus;
 use App\Repository\JobOfferRepository;
+use App\Service\JobSearch\CompanyMatcher;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,6 +18,7 @@ class JobOfferApiController
         Request $request,
         EntityManagerInterface $em,
         JobOfferRepository $repository,
+        CompanyMatcher $companyMatcher,
         #[Autowire('%env(JOB_OFFER_API_KEY)%')] string $expectedApiKey,
     ): JsonResponse {
         // --- Authentification simple par clé API ---
@@ -75,6 +77,8 @@ class JobOfferApiController
             } catch (\Exception) {
             }
         }
+
+        $companyMatcher->link($offer);
 
         $em->persist($offer);
         $em->flush();
