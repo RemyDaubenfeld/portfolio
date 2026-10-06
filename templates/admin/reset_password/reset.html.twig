@@ -1,0 +1,33 @@
+{% extends 'admin/auth_layout.html.twig' %}
+{% import 'admin/_auth_macros.html.twig' as ui %}
+
+{% block title %}Nouveau mot de passe{% endblock %}
+
+{% block heading %}🔑 Nouveau mot de passe{% endblock %}
+
+{% block content %}
+    {% if error %}
+        {{ ui.error(error) }}
+    {% endif %}
+
+    <form method="post" class="flex flex-col gap-4">
+        <div>
+            {{ ui.label('password', 'Nouveau mot de passe') }}
+            <input type="password" id="password" name="password" required minlength="{{ min_length }}"
+                   autocomplete="new-password" autofocus
+                   class="{{ ui.input_class() }}">
+            <p class="font-mono text-[0.7rem] text-text-mute mt-[0.4rem]">{{ min_length }} caractères minimum</p>
+        </div>
+
+        <div>
+            {{ ui.label('password_confirm', 'Confirmation') }}
+            <input type="password" id="password_confirm" name="password_confirm" required minlength="{{ min_length }}"
+                   autocomplete="new-password"
+                   class="{{ ui.input_class() }}">
+        </div>
+
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('reset_password') }}">
+
+        {{ ui.submit('Enregistrer') }}
+    </form>
+{% endblock %}

@@ -1,0 +1,12 @@
+<p>Bonjour,</p>
+
+<p>Une demande de réinitialisation du mot de passe de l'admin du portfolio a été faite.</p>
+
+<p>
+    Pour choisir un nouveau mot de passe, cliquez sur le lien ci-dessous :<br>
+    <a href="{{ url('admin_reset_password', {token: resetToken.token}) }}">{{ url('admin_reset_password', {token: resetToken.token}) }}</a>
+</p>
+
+<p>Ce lien expire dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.</p>
+
+<p>Si vous n'êtes pas à l'origine de cette demande, ignorez simplement cet email : votre mot de passe reste inchangé.</p>

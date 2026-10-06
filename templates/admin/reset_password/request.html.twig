@@ -1,0 +1,32 @@
+{% extends 'admin/auth_layout.html.twig' %}
+{% import 'admin/_auth_macros.html.twig' as ui %}
+
+{% block title %}Mot de passe oublié{% endblock %}
+
+{% block heading %}🔑 Mot de passe oublié{% endblock %}
+
+{% block content %}
+    {% for message in app.flashes('reset_password_error') %}
+        {{ ui.error(message) }}
+    {% endfor %}
+
+    <p class="text-[0.9rem] text-text-mute mb-5">
+        Saisissez l'email de votre compte admin : un lien pour choisir un nouveau mot de passe vous sera envoyé.
+    </p>
+
+    <form method="post" class="flex flex-col gap-4">
+        <div>
+            {{ ui.label('email', 'Email') }}
+            <input type="email" id="email" name="email" required autocomplete="email" autofocus
+                   class="{{ ui.input_class() }}">
+        </div>
+
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('reset_password_request') }}">
+
+        {{ ui.submit('Envoyer le lien') }}
+
+        <div class="text-center">
+            {{ ui.link(path('admin_login'), '← Retour à la connexion') }}
+        </div>
+    </form>
+{% endblock %}

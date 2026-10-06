@@ -18,7 +18,9 @@ framework:
             messenger.bus.default: []
 
         routing:
-            Symfony\Component\Mailer\Messenger\SendEmailMessage: async
+            # Pas de worker messenger en production : les emails (réinitialisation de mot de passe)
+            # sont envoyés immédiatement plutôt que mis en file d'attente
+            # Symfony\Component\Mailer\Messenger\SendEmailMessage: async
             Symfony\Component\Notifier\Message\ChatMessage: async
             Symfony\Component\Notifier\Message\SmsMessage: async
 

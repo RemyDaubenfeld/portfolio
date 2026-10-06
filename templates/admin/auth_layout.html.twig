@@ -1,0 +1,25 @@
+{# Mise en page commune aux écrans d'authentification de l'admin (connexion, mot de passe oublié) #}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin — {% block title %}{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+    {% block importmap %}{{ importmap('app') }}{% endblock %}
+</head>
+<body class="min-h-screen grid place-items-center bg-bg text-text">
+
+    <div class="bg-bg2 border border-border rounded-[12px] p-10 w-[min(100%,380px)]">
+
+        <h1 class="font-display text-[1.1rem] font-semibold text-text mb-6 flex items-center gap-2">
+            {% block heading %}{% endblock %}
+        </h1>
+
+        {% block content %}{% endblock %}
+
+    </div>
+
+</body>
+</html>
