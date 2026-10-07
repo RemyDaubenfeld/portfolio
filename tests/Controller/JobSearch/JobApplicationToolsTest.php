@@ -7,7 +7,6 @@ use App\Entity\Company;
 use App\Entity\CoverLetterTemplate;
 use App\Entity\JobApplication;
 use App\Entity\JobOffer;
-use App\Entity\Setting;
 use App\Entity\User;
 use App\Enum\JobApplicationEventType;
 use App\Enum\JobApplicationStatus;
@@ -31,13 +30,13 @@ final class JobApplicationToolsTest extends WebTestCase
         $this->em = static::getContainer()->get(EntityManagerInterface::class);
 
         $connection = $this->em->getConnection();
-        foreach (['job_application', 'job_offer', 'company', 'cover_letter_template', 'user', 'admin_user', 'setting'] as $table) {
+        foreach (['job_application', 'job_offer', 'company', 'cover_letter_template', 'user', 'admin_user'] as $table) {
             $connection->executeStatement("DELETE FROM `$table`");
         }
 
         $admin = (new AdminUser())->setEmail('admin@test.local')->setPassword('unused');
         $this->em->persist($admin);
-        $this->em->persist((new User())->setFirstName('Rémy')->setLastName('Daubenfeld')->setLocation('57160 Moulins-lès-Metz'));
+        $this->em->persist((new User())->setFirstName('Rémy')->setLastName('Daubenfeld')->setLocation('57160 Moulins-lès-Metz')->setEmail('profil@test.local'));
         $this->em->flush();
         $this->client->loginUser($admin, 'admin');
     }
@@ -126,24 +125,22 @@ final class JobApplicationToolsTest extends WebTestCase
         $tester->assertCommandIsSuccessful();
         self::assertEmailCount(1);
         $email = self::getMailerMessage();
-        self::assertEmailAddressContains($email, 'to', 'admin@test.local');
+        self::assertEmailAddressContains($email, 'to', 'profil@test.local');
         self::assertEmailSubjectContains($email, '1 relance à faire');
         self::assertEmailHtmlBodyContains($email, 'ACME — Développeur Symfony (H/F)');
     }
 
-    public function testDailyDigestRecipientsCanBeConfigured(): void
+    public function testDailyDigestFallsBackToAdminEmailWithoutProfileEmail(): void
     {
-        $this->em->persist((new Setting())->setKey('job_search_digest_recipient')->setValue('moi@exemple.fr, autre@exemple.fr'));
+        $this->em->getRepository(User::class)->findOneBy([])->setEmail('');
+        $this->em->flush();
         $this->createApplication(new \DateTimeImmutable('-12 days'));
 
         $tester = new CommandTester((new Application(self::$kernel))->find('app:job-search:daily-digest'));
         $tester->execute([]);
 
         self::assertEmailCount(1);
-        $email = self::getMailerMessage();
-        self::assertEmailAddressContains($email, 'to', 'moi@exemple.fr');
-        self::assertEmailAddressContains($email, 'to', 'autre@exemple.fr');
-        self::assertEmailAddressNotContains($email, 'to', 'admin@test.local');
+        self::assertEmailAddressContains(self::getMailerMessage(), 'to', 'admin@test.local');
     }
 
     public function testDailyDigestApiRequiresKey(): void

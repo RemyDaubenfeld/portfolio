@@ -2,7 +2,7 @@
 
 {% macro action_button(controller, action, entityId, label, icon, variant) %}
     <form method="post" action="{{ ea_url().setController(controller).setAction(action).setEntityId(entityId) }}">
-        <button type="submit" class="btn btn-sm btn-{{ variant }}"><i class="{{ icon }}"></i> {{ label }}</button>
+        <button type="submit" class="btn btn-sm btn-{{ variant }}" title="{{ label }}" aria-label="{{ label }}"><i class="{{ icon }}"></i></button>
     </form>
 {% endmacro %}
 
@@ -19,27 +19,27 @@
 {% block main %}
 <style>
     #main.content-body { padding-top: 1rem; }
-    .js-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .js-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
     /* Une teinte par groupe de blocs : couleur semi-transparente, lisible en thème clair comme sombre */
     .js-tone-stats { --tone: 59, 130, 246; }   /* bleu : indicateurs */
     .js-tone-offers { --tone: 16, 185, 129; }  /* vert : offres et candidatures en cours */
     .js-tone-follow { --tone: 245, 158, 11; }  /* ambre : relances et entretiens */
     .js-tone-company { --tone: 139, 92, 246; } /* violet : entreprises */
 
-    .js-kpi { display: block; padding: 1rem 1.25rem; border: 1px solid rgba(var(--tone), .3); border-radius: 10px;
+    .js-kpi { display: block; padding: .7rem 1rem; border: 1px solid rgba(var(--tone), .3); border-radius: 10px;
               background: rgba(var(--tone), .08); color: inherit; text-decoration: none; }
     .js-kpi:hover { opacity: .85; }
     .js-kpi-label { font-size: .8rem; opacity: .7; }
-    .js-kpi-value { font-size: 1.8rem; font-weight: 600; line-height: 1.2; font-variant-numeric: tabular-nums; }
+    .js-kpi-value { font-size: 1.6rem; font-weight: 600; line-height: 1.2; font-variant-numeric: tabular-nums; }
     .js-kpi-sub { font-size: .78rem; opacity: .7; }
     .js-kpi.is-alert { border-color: var(--bs-warning, #f59e0b); box-shadow: inset 0 0 0 1px var(--bs-warning, #f59e0b); }
 
     /* 2 colonnes, une seule sous 1100px ; minmax(0, 1fr) laisse les colonnes rétrécir au lieu de déborder */
-    .js-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
+    .js-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
     .js-wide { grid-column: 1 / -1; }
     @media (max-width: 1100px) { .js-grid { grid-template-columns: minmax(0, 1fr); } }
 
-    .js-panel { border: 1px solid rgba(var(--tone), .3); border-radius: 10px; padding: 1rem 1.25rem; overflow-x: auto;
+    .js-panel { border: 1px solid rgba(var(--tone), .3); border-radius: 10px; padding: .75rem 1.25rem; overflow-x: auto;
                 background: rgba(var(--tone), .07); }
     .js-panel h2 i { color: rgb(var(--tone)); }
     /* Les tableaux Bootstrap peignent leur propre fond : on le rend transparent pour laisser voir la teinte */
@@ -52,13 +52,23 @@
     .js-sub { font-size: .8rem; opacity: .7; }
     .js-nowrap { white-space: nowrap; }
     .js-due { color: var(--bs-warning, #f59e0b); font-weight: 600; }
-    .js-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .35rem; }
+    .js-actions { display: flex; justify-content: flex-end; gap: .35rem; }
     .js-actions .btn { white-space: nowrap; }
     .js-empty { opacity: .6; font-size: .9rem; margin: 0; }
     .js-more { display: inline-block; margin-top: .6rem; font-size: .85rem; }
 
-    .js-companies { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0 2.5rem; }
-    .js-companies h3 { font-size: .8rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; opacity: .7; margin-bottom: .4rem; }
+    /* Au-delà d'une dizaine de lignes, le tableau défile dans le bloc au lieu de l'allonger */
+    .js-scroll { max-height: 15rem; overflow-y: auto; }
+    .js-panel .js-scroll .table > thead > tr > th { position: sticky; top: 0; z-index: 1;
+        background-color: var(--body-bg);
+        background-image: linear-gradient(rgba(var(--tone), .07), rgba(var(--tone), .07)); }
+
+    /* Régions sur une seule ligne : les statuts des entreprises sont déjà dans les indicateurs du haut */
+    .js-regions { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .js-region { display: flex; align-items: baseline; gap: .5rem; padding: .3rem .75rem; border-radius: 999px;
+                 border: 1px solid rgba(var(--tone), .3); background: rgba(var(--tone), .08); color: inherit; text-decoration: none; }
+    a.js-region:hover { border-color: rgb(var(--tone)); }
+    .js-region strong { font-variant-numeric: tabular-nums; }
 </style>
 
 {# --- Indicateurs --- #}
@@ -99,7 +109,8 @@
     <a class="js-kpi" href="#entreprises">
         <div class="js-kpi-label">Entreprises</div>
         <div class="js-kpi-value">{{ companiesTotal }}</div>
-        <div class="js-kpi-sub">{{ companiesByStatus|filter(s => s.status.value in ['to_qualify', 'to_contact'])|map(s => s.total ~ ' ' ~ s.status.label|lower)|join(' · ') }}</div>
+        {% set companyStatusLabels = {to_qualify: 'à qualifier', to_contact: 'à contacter', contacted: 'contactée(s)', no_response: 'sans réponse'} %}
+        <div class="js-kpi-sub">{{ companiesByStatus|filter(s => s.total > 0)|map(s => s.total ~ ' ' ~ companyStatusLabels[s.status.value])|join(' · ') }}</div>
     </a>
 </div>
 
@@ -112,6 +123,7 @@
         {% if latestOffers is empty %}
             <p class="js-empty">Aucune offre en attente.</p>
         {% else %}
+            <div class="js-scroll">
             <table class="table table-sm">
                 <thead><tr><th>Offre</th><th>Lieu</th><th></th></tr></thead>
                 <tbody>
@@ -132,8 +144,9 @@
                 {% endfor %}
                 </tbody>
             </table>
-            {% if offersToReview > latestOffers|length %}
-                <a class="js-more" href="{{ ea_url().setController(offerCrud).setAction('index') }}">Voir les {{ offersToReview }} offres à étudier →</a>
+            </div>
+            {% if offersToReview > 0 %}
+                <a class="js-more" href="{{ ea_url().setController(offerCrud).setAction('index').set('filters', {applicationStatus: {comparison: '=', value: 'to_review'}}) }}">Voir les {{ offersToReview }} offres à étudier →</a>
             {% endif %}
         {% endif %}
     </section>
@@ -143,6 +156,7 @@
         {% if awaitingApplications is empty %}
             <p class="js-empty">Aucune candidature en attente de réponse.</p>
         {% else %}
+            <div class="js-scroll">
             <table class="table table-sm">
                 <thead><tr><th>Candidature</th><th>Envoyée</th><th>Relance prévue</th></tr></thead>
                 <tbody>
@@ -165,6 +179,7 @@
                 {% endfor %}
                 </tbody>
             </table>
+            </div>
         {% endif %}
     </section>
 
@@ -175,6 +190,7 @@
         {% if followUpsDue is empty %}
             <p class="js-empty">Aucune relance en attente.</p>
         {% else %}
+            <div class="js-scroll">
             <table class="table table-sm">
                 <thead><tr><th>Candidature</th><th>Envoyée</th><th></th></tr></thead>
                 <tbody>
@@ -198,6 +214,7 @@
                 {% endfor %}
                 </tbody>
             </table>
+            </div>
         {% endif %}
     </section>
 
@@ -206,6 +223,7 @@
         {% if interviews is empty %}
             <p class="js-empty">Aucun entretien en cours.</p>
         {% else %}
+            <div class="js-scroll">
             <table class="table table-sm">
                 <tbody>
                 {% for application in interviews %}
@@ -218,6 +236,7 @@
                 {% endfor %}
                 </tbody>
             </table>
+            </div>
         {% endif %}
     </section>
 
@@ -228,34 +247,14 @@
         {% if companiesTotal == 0 %}
             <p class="js-empty">Aucune entreprise enregistrée. Importer la liste avec <code>php bin/console app:job-search:import-companies</code>.</p>
         {% else %}
-            <div class="js-companies">
-                <div>
-                    <h3>Par statut</h3>
-                    <table class="table table-sm">
-                        <tbody>
-                        {% for item in companiesByStatus %}
-                            <tr>
-                                <td>
-                                    <a href="{{ ea_url().setController(companyCrud).setAction('index').set('filters', {status: {comparison: '=', value: item.status.value}}) }}">
-                                        <span class="badge badge-{{ item.status.color }}">{{ item.status.label }}</span>
-                                    </a>
-                                </td>
-                                <td class="text-end">{{ item.total }}</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div>
-                    <h3>Par région</h3>
-                    <table class="table table-sm">
-                        <tbody>
-                        {% for region, total in companiesByRegion %}
-                            <tr><td>{{ region }}</td><td class="text-end">{{ total }}</td></tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+            <div class="js-regions">
+                {% for region, total in companiesByRegion %}
+                    {% if region == 'Non renseignée' %}
+                        <span class="js-region">{{ region }} <strong>{{ total }}</strong></span>
+                    {% else %}
+                        <a class="js-region" href="{{ ea_url().setController(companyCrud).setAction('index').set('filters', {region: {comparison: '=', value: region}}) }}">{{ region }} <strong>{{ total }}</strong></a>
+                    {% endif %}
+                {% endfor %}
             </div>
         {% endif %}
     </section>

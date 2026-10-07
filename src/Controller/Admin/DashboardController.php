@@ -12,7 +12,6 @@ use App\Controller\Admin\InterestCrudController;
 use App\Controller\Admin\LanguageCrudController;
 use App\Controller\Admin\LegalCrudController;
 use App\Controller\Admin\ProjectCrudController;
-use App\Controller\Admin\SettingCrudController;
 use App\Controller\Admin\SkillCategoryCrudController;
 use App\Controller\Admin\SkillCrudController;
 use App\Controller\Admin\TechnologyCrudController;
@@ -39,7 +38,6 @@ class DashboardController extends AbstractDashboardController
                 ['label' => 'Technologies', 'icon' => 'fa fa-wrench', 'controller' => TechnologyCrudController::class],
                 ['label' => 'Stats hero', 'icon' => 'fa fa-chart-bar', 'controller' => HeroStatCrudController::class],
                 ['label' => 'Phrases typing', 'icon' => 'fa fa-keyboard', 'controller' => HeroTypingCrudController::class],
-                ['label' => 'Paramètres', 'icon' => 'fa fa-cog', 'controller' => SettingCrudController::class],
                 ['label' => 'Mentions légales', 'icon' => 'fa fa-scale-balanced', 'controller' => LegalCrudController::class],
             ],
         ]);
@@ -86,7 +84,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkTo(ChatbotPromptCrudController::class, 'Connaissances', 'fa fa-brain');
 
         yield MenuItem::section('Divers');
-        yield MenuItem::linkTo(SettingCrudController::class, 'Paramètres', 'fa fa-cog');
         yield MenuItem::linkTo(SeoCrudController::class, 'SEO / GEO', 'fa fa-search')->setAction('index');
         yield MenuItem::linkTo(LegalCrudController::class, 'Mentions légales', 'fa fa-scale-balanced');
     }

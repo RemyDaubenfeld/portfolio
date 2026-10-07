@@ -4,6 +4,7 @@ namespace App\Tests\Controller\JobSearch;
 
 use App\Entity\AdminUser;
 use App\Entity\Company;
+use App\Entity\Department;
 use App\Entity\JobApplication;
 use App\Entity\JobOffer;
 use App\Enum\CompanySource;
@@ -45,7 +46,7 @@ final class JobSearchFlowTest extends WebTestCase
     {
         // Entreprise issue de la liste IT, avec deux agences
         $this->em->persist((new Company())->setName('Abylsen EST')->setCity('Strasbourg')->setSource(CompanySource::ItList));
-        $metz = (new Company())->setName('Abylsen EST')->setCity('Metz')->setSource(CompanySource::ItList);
+        $metz = (new Company())->setName('Abylsen EST')->setCity('Metz')->setRegion('Lorraine')->setSource(CompanySource::ItList);
         $this->em->persist($metz);
         $this->em->flush();
 
@@ -56,11 +57,16 @@ final class JobSearchFlowTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('body', 'Développeur Symfony');
 
-        // Les liens "par statut" mènent à la liste des entreprises filtrée
-        // ("À qualifier" : aucune ici, les deux agences importées sont "À contacter")
-        $this->client->click($crawler->filter('.js-companies a')->first()->link());
+        // Les régions mènent à la liste des entreprises filtrée (seule l'agence de Metz est en Lorraine)
+        $this->client->click($crawler->filter('a.js-region')->link());
         self::assertResponseIsSuccessful();
-        self::assertSelectorNotExists('table.datagrid tbody tr[data-id]');
+        self::assertCount(1, $this->client->getCrawler()->filter('table.datagrid tbody tr[data-id]'));
+        $crawler = $this->client->request('GET', '/job-search');
+
+        // Le lien sous les offres ouvre la liste filtrée sur "À étudier"
+        $this->client->click($crawler->filter('a.js-more')->link());
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('table.datagrid', 'Développeur Symfony');
         $crawler = $this->client->request('GET', '/job-search');
 
         $this->client->submit($crawler->filter(sprintf('form[action*="/job-offer/%d/apply"]', $offer->getId()))->form());
@@ -160,6 +166,22 @@ final class JobSearchFlowTest extends WebTestCase
         // Relancer la commande ne crée pas de doublon
         $tester->execute([]);
         self::assertSame(2, $repository->count([]));
+    }
+
+    public function testSearchConfigExposesActiveDepartments(): void
+    {
+        $this->em->getConnection()->executeStatement('DELETE FROM department');
+        $this->em->persist((new Department())->setCode('57')->setName('Moselle'));
+        $this->em->persist((new Department())->setCode('54')->setName('Meurthe-et-Moselle'));
+        $this->em->persist((new Department())->setCode('67')->setName('Bas-Rhin')->setActive(false));
+        $this->em->flush();
+
+        $this->client->request('GET', '/job-search/department');
+        self::assertResponseIsSuccessful();
+
+        $this->client->request('GET', '/api/search-config', server: ['HTTP_X_API_KEY' => $_ENV['JOB_OFFER_API_KEY'] ?? $_SERVER['JOB_OFFER_API_KEY']]);
+        self::assertResponseIsSuccessful();
+        self::assertSame(['54', '57'], json_decode($this->client->getResponse()->getContent(), true)['departements']);
     }
 
     public function testActionsRejectGet(): void

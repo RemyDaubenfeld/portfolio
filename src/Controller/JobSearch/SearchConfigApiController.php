@@ -2,9 +2,9 @@
 
 namespace App\Controller\JobSearch;
 
+use App\Repository\DepartmentRepository;
 use App\Repository\RomeCodeRepository;
 use App\Repository\SearchCriteriaRepository;
-use App\Repository\SettingRepository;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,16 +12,12 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class SearchConfigApiController
 {
-    /** Clé de la table setting listant les départements à cibler, séparés par des virgules. */
-    private const DEPARTEMENTS_SETTING = 'job_search_departements';
-    private const DEFAULT_DEPARTEMENTS = '54,57,55';
-
     #[Route('/api/search-config', name: 'api_search_config', methods: ['GET'])]
     public function index(
         Request $request,
         SearchCriteriaRepository $criteriaRepo,
         RomeCodeRepository $romeRepo,
-        SettingRepository $settingRepo,
+        DepartmentRepository $departmentRepo,
         #[Autowire('%env(JOB_OFFER_API_KEY)%')] string $expectedApiKey,
     ): JsonResponse {
         $providedKey = $request->headers->get('X-API-KEY');
@@ -39,12 +35,15 @@ class SearchConfigApiController
             $romeRepo->findBy(['active' => true])
         );
 
-        $departements = $settingRepo->find(self::DEPARTEMENTS_SETTING)?->getValue() ?? self::DEFAULT_DEPARTEMENTS;
+        $departements = array_map(
+            fn($d) => $d->getCode(),
+            $departmentRepo->findBy(['active' => true], ['code' => 'ASC'])
+        );
 
         return new JsonResponse([
             'keyWords' => array_values($keyWords),
             'romeCodes' => array_values($romeCodes),
-            'departements' => array_values(array_filter(array_map('trim', explode(',', $departements)))),
+            'departements' => array_values($departements),
         ]);
     }
 }

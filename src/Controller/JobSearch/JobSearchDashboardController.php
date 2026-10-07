@@ -46,7 +46,7 @@ class JobSearchDashboardController extends AbstractDashboardController
             'followUpsDue' => $this->applicationRepository->findFollowUpsDue(),
             'awaitingApplications' => $this->applicationRepository->findAwaitingResponse(),
             'interviews' => $this->applicationRepository->findByStatus(JobApplicationStatus::Interview),
-            'latestOffers' => $this->offerRepository->findLatestToReview(8),
+            'latestOffers' => $this->offerRepository->findLatestToReview(50),
         ]);
     }
 
@@ -75,5 +75,6 @@ class JobSearchDashboardController extends AbstractDashboardController
         yield MenuItem::section('Configuration n8n');
         yield MenuItem::linkTo(SearchCriteriaCrudController::class, 'Mots-clés', 'fa fa-tags');
         yield MenuItem::linkTo(RomeCodeCrudController::class, 'Codes ROME', 'fa fa-sitemap');
+        yield MenuItem::linkTo(DepartmentCrudController::class, 'Départements', 'fa fa-map-location-dot');
     }
 }
