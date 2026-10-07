@@ -71,6 +71,7 @@ class JobSearchDashboardController extends AbstractDashboardController
         yield MenuItem::linkTo(JobOfferCrudController::class, 'Offres d\'emploi', 'fa fa-briefcase');
         yield MenuItem::linkTo(JobApplicationCrudController::class, 'Candidatures', 'fa fa-paper-plane');
         yield MenuItem::linkTo(CompanyCrudController::class, 'Entreprises', 'fa fa-building');
+        yield MenuItem::linkTo(CoverLetterTemplateCrudController::class, 'Modèles de lettre', 'fa fa-file-lines');
         yield MenuItem::section('Configuration n8n');
         yield MenuItem::linkTo(SearchCriteriaCrudController::class, 'Mots-clés', 'fa fa-tags');
         yield MenuItem::linkTo(RomeCodeCrudController::class, 'Codes ROME', 'fa fa-sitemap');

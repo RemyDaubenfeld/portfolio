@@ -1,0 +1,18 @@
+{# Historique d'une candidature, affiché sur sa fiche détail #}
+{# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{% if field.value is empty %}
+    <span class="badge badge-secondary">Aucun événement</span>
+{% else %}
+    <ul class="list-unstyled mb-0">
+        {% for event in field.value %}
+            <li class="d-flex align-items-baseline gap-2 mb-1">
+                <span class="text-muted" style="min-width: 6.5rem; font-variant-numeric: tabular-nums;">{{ event.occurredAt|date('d/m/Y H:i') }}</span>
+                <i class="{{ event.type.icon }} text-muted"></i>
+                <span>{{ event.label }}</span>
+                {% if event.type.value != 'followed_up' %}
+                    <span class="badge badge-{{ event.status.color }}">{{ event.status.label }}</span>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}

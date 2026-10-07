@@ -1,0 +1,64 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% set crud = 'App\\Controller\\JobSearch\\JobApplicationCrudController' %}
+{% set templateCrud = 'App\\Controller\\JobSearch\\CoverLetterTemplateCrudController' %}
+{% set pdfUrl = ea_url().setController(crud).setAction('coverLetterPdf').setEntityId(application.id) %}
+
+{% block page_title %}Lettre de motivation{% endblock %}
+
+{% block page_actions %}
+    <a class="btn btn-secondary" href="{{ ea_url().setController(crud).setAction('detail').setEntityId(application.id) }}">
+        <i class="fa fa-arrow-left"></i> Retour à la candidature
+    </a>
+    {% if application.coverLetter %}
+        <a class="btn btn-secondary" href="{{ pdfUrl }}" target="_blank" rel="noopener"><i class="fa fa-eye"></i> Aperçu PDF</a>
+        <a class="btn btn-primary" href="{{ pdfUrl ~ (pdfUrl matches '/\\?/' ? '&' : '?') ~ 'download=1' }}"><i class="fa fa-download"></i> Télécharger le PDF</a>
+    {% endif %}
+{% endblock %}
+
+{% block main %}
+<style>
+    .cl-meta { margin-bottom: 1.25rem; opacity: .85; }
+    .cl-meta strong { opacity: 1; }
+    .cl-box { border: 1px solid var(--color-border); border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
+    .cl-template { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+    .cl-template select { max-width: 320px; }
+    .cl-body { width: 100%; min-height: 26rem; font-family: inherit; line-height: 1.55; }
+    .cl-frame { font-size: .85rem; opacity: .65; margin: .4rem 0; }
+</style>
+
+<p class="cl-meta">
+    <strong>{{ application }}</strong><br>
+    Objet : {{ subject }}
+</p>
+
+<div class="cl-box">
+    <form method="post" class="cl-template">
+        <input type="hidden" name="_token" value="{{ csrf_token('cover_letter') }}">
+        {% if templates is empty %}
+            <span>Aucun modèle de lettre.</span>
+            <a href="{{ ea_url().setController(templateCrud).setAction('new') }}">Créer un modèle →</a>
+        {% else %}
+            <label for="template" class="mb-0">Partir du modèle</label>
+            <select id="template" name="template" class="form-select form-select-sm">
+                {% for template in templates %}
+                    <option value="{{ template.id }}">{{ template.name }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" name="apply_template" value="1" class="btn btn-sm btn-secondary"
+                    {% if application.coverLetter %}onclick="return window.confirm('Remplacer le texte actuel par ce modèle ?')"{% endif %}>
+                <i class="fa fa-wand-magic-sparkles"></i> Appliquer
+            </button>
+            <span class="cl-frame">Les variables {entreprise}, {poste} et {ville} sont remplacées automatiquement.</span>
+        {% endif %}
+    </form>
+</div>
+
+<form method="post" class="cl-box">
+    <input type="hidden" name="_token" value="{{ csrf_token('cover_letter') }}">
+    <p class="cl-frame">Madame, Monsieur,</p>
+    <textarea name="body" class="form-control cl-body" placeholder="Paragraphes de la lettre, séparés par une ligne vide.">{{ application.coverLetter }}</textarea>
+    <p class="cl-frame">Je vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.</p>
+    <button type="submit" class="btn btn-primary"><i class="fa fa-floppy-disk"></i> Enregistrer</button>
+</form>
+{% endblock %}

@@ -29,6 +29,19 @@ class JobOfferRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    /** @return JobOffer[] offres encore à étudier arrivées depuis la date donnée */
+    public function findToReviewCreatedSince(\DateTimeImmutable $since): array
+    {
+        return $this->createQueryBuilder('o')
+            ->where('o.applicationStatus = :status')
+            ->andWhere('o.createdAt >= :since')
+            ->setParameter('status', JobOfferStatus::ToReview)
+            ->setParameter('since', $since)
+            ->orderBy('o.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
     /** @return JobOffer[] dernières offres à étudier */
     public function findLatestToReview(int $limit): array
     {

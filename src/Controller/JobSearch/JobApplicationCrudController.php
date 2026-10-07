@@ -3,6 +3,8 @@
 namespace App\Controller\JobSearch;
 
 use App\Entity\JobApplication;
+use App\Repository\CoverLetterTemplateRepository;
+use App\Service\JobSearch\CoverLetterGenerator;
 use App\Enum\JobApplicationStatus;
 use App\Enum\JobApplicationType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,11 +19,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class JobApplicationCrudController extends AbstractCrudController
 {
@@ -56,12 +61,17 @@ class JobApplicationCrudController extends AbstractCrudController
             ->renderAsForm()
             ->displayIf($isAwaiting);
 
+        $coverLetter = Action::new('coverLetter', 'Lettre de motivation', 'fa fa-file-lines')
+            ->linkToCrudAction('coverLetter');
+
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->add(Crud::PAGE_INDEX, $followUp)
             ->add(Crud::PAGE_INDEX, $noResponse)
+            ->add(Crud::PAGE_INDEX, $coverLetter)
             ->add(Crud::PAGE_DETAIL, $followUp)
-            ->add(Crud::PAGE_DETAIL, $noResponse);
+            ->add(Crud::PAGE_DETAIL, $noResponse)
+            ->add(Crud::PAGE_DETAIL, $coverLetter);
     }
 
     public function configureFilters(Filters $filters): Filters
@@ -106,6 +116,61 @@ class JobApplicationCrudController extends AbstractCrudController
         yield TextField::new('cvVersion', 'Version du CV')->hideOnIndex();
         yield TextareaField::new('notes', 'Notes')->hideOnIndex();
         yield DateTimeField::new('createdAt', 'Créée le')->onlyOnDetail();
+        yield Field::new('events', 'Historique')
+            ->onlyOnDetail()
+            ->setTemplatePath('admin/field/application_timeline.html.twig');
+    }
+
+    /** Rédaction de la lettre : application d'un modèle puis ajustement du texte. */
+    #[AdminRoute('/{entityId}/cover-letter', name: 'cover_letter', options: ['methods' => ['GET', 'POST']])]
+    public function coverLetter(
+        AdminContext $context,
+        Request $request,
+        EntityManagerInterface $em,
+        CoverLetterTemplateRepository $templateRepository,
+        CoverLetterGenerator $generator,
+    ): Response {
+        /** @var JobApplication $application */
+        $application = $context->getEntity()->getInstance();
+
+        if ($request->isMethod('POST')) {
+            if (!$this->isCsrfTokenValid('cover_letter', $request->request->getString('_token'))) {
+                throw $this->createAccessDeniedException('Jeton CSRF invalide.');
+            }
+
+            if ($request->request->has('apply_template')) {
+                $template = $templateRepository->find($request->request->getInt('template'));
+                if ($template) {
+                    $application->setCoverLetter($generator->fill($template, $application));
+                    $this->addFlash('success', sprintf('Modèle « %s » appliqué. Ajustez le texte puis enregistrez.', $template->getName()));
+                }
+            } else {
+                $application->setCoverLetter(trim($request->request->getString('body')) ?: null);
+                $this->addFlash('success', 'Lettre enregistrée.');
+            }
+            $em->flush();
+
+            return $this->redirect($request->getUri());
+        }
+
+        return $this->render('admin/job_application/cover_letter.html.twig', [
+            'application' => $application,
+            'subject' => $generator->subject($application),
+            'templates' => $templateRepository->findBy([], ['name' => 'ASC']),
+        ]);
+    }
+
+    #[AdminRoute('/{entityId}/cover-letter.pdf', name: 'cover_letter_pdf', options: ['methods' => ['GET']])]
+    public function coverLetterPdf(AdminContext $context, Request $request, CoverLetterGenerator $generator): Response
+    {
+        /** @var JobApplication $application */
+        $application = $context->getEntity()->getInstance();
+
+        $disposition = $request->query->getBoolean('download') ? ResponseHeaderBag::DISPOSITION_ATTACHMENT : ResponseHeaderBag::DISPOSITION_INLINE;
+        $response = new Response($generator->renderPdf($application), 200, ['Content-Type' => 'application/pdf']);
+        $response->headers->set('Content-Disposition', $response->headers->makeDisposition($disposition, $generator->filename($application)));
+
+        return $response;
     }
 
     #[AdminRoute('/{entityId}/follow-up', name: 'follow_up', options: ['methods' => ['POST']])]

@@ -2,9 +2,12 @@
 
 namespace App\Entity;
 
+use App\Enum\JobApplicationEventType;
 use App\Enum\JobApplicationStatus;
 use App\Enum\JobApplicationType;
 use App\Repository\JobApplicationRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: JobApplicationRepository::class)]
@@ -50,11 +53,25 @@ class JobApplication
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $notes = null;
 
+    /** Corps de la lettre de motivation (paragraphes entre la formule d'appel et la formule de politesse). */
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $coverLetter = null;
+
     #[ORM\Column]
     private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
+
+    /** @var Collection<int, JobApplicationEvent> */
+    #[ORM\OneToMany(targetEntity: JobApplicationEvent::class, mappedBy: 'application', cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['occurredAt' => 'ASC', 'id' => 'ASC'])]
+    private Collection $events;
+
+    public function __construct()
+    {
+        $this->events = new ArrayCollection();
+    }
 
     /** Crée une candidature envoyée à partir d'une offre. */
     public static function fromOffer(JobOffer $offer): self
@@ -77,6 +94,35 @@ class JobApplication
         if ($this->status !== JobApplicationStatus::Draft) {
             $this->company?->markAsContacted();
         }
+
+        $this->recordCreation();
+    }
+
+    /**
+     * Historique initial : la création est datée du jour d'envoi. Si la candidature est saisie
+     * directement à un statut plus avancé (refus, entretien...), ce statut est ajouté ensuite.
+     */
+    private function recordCreation(): void
+    {
+        if ($this->status === JobApplicationStatus::Draft) {
+            $this->addEvent(JobApplicationEventType::Created, JobApplicationStatus::Draft, $this->createdAt);
+
+            return;
+        }
+
+        $this->addEvent(JobApplicationEventType::Created, JobApplicationStatus::Sent, $this->sentAt);
+        if ($this->status !== JobApplicationStatus::Sent) {
+            $this->addEvent(JobApplicationEventType::StatusChanged, $this->status);
+        }
+    }
+
+    private function addEvent(
+        JobApplicationEventType $type,
+        JobApplicationStatus $status,
+        ?\DateTimeImmutable $occurredAt = null,
+        ?string $comment = null,
+    ): void {
+        $this->events->add(new JobApplicationEvent($this, $type, $status, $occurredAt, $comment));
     }
 
     #[ORM\PreUpdate]
@@ -109,7 +155,8 @@ class JobApplication
         $this->lastFollowedUpAt = $now;
         $this->followUpCount++;
         $this->followUpAt = $now->modify(self::FOLLOW_UP_DELAY);
-        $this->setStatus(JobApplicationStatus::FollowedUp);
+        $this->applyStatus(JobApplicationStatus::FollowedUp);
+        $this->addEvent(JobApplicationEventType::FollowedUp, $this->status, $now, sprintf('Relance n°%d', $this->followUpCount));
     }
 
     public function isFollowUpDue(): bool
@@ -174,16 +221,26 @@ class JobApplication
         return $this->status;
     }
 
-    /** Le statut est répercuté sur l'offre liée pour garder les deux vues cohérentes. */
+    /** Les changements de statut d'une candidature déjà enregistrée sont ajoutés à son historique. */
     public function setStatus(JobApplicationStatus $status): static
+    {
+        if ($status !== $this->status && $this->id !== null) {
+            $this->addEvent(JobApplicationEventType::StatusChanged, $status);
+        }
+
+        $this->applyStatus($status);
+
+        return $this;
+    }
+
+    /** Le statut est répercuté sur l'offre liée pour garder les deux vues cohérentes. */
+    private function applyStatus(JobApplicationStatus $status): void
     {
         $this->status = $status;
 
         if ($offerStatus = $status->toJobOfferStatus()) {
             $this->offer?->setApplicationStatus($offerStatus);
         }
-
-        return $this;
     }
 
     public function getSentAt(): ?\DateTimeImmutable
@@ -258,6 +315,18 @@ class JobApplication
         return $this;
     }
 
+    public function getCoverLetter(): ?string
+    {
+        return $this->coverLetter;
+    }
+
+    public function setCoverLetter(?string $coverLetter): static
+    {
+        $this->coverLetter = $coverLetter;
+
+        return $this;
+    }
+
     public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
@@ -266,5 +335,11 @@ class JobApplication
     public function getUpdatedAt(): ?\DateTimeImmutable
     {
         return $this->updatedAt;
+    }
+
+    /** @return Collection<int, JobApplicationEvent> */
+    public function getEvents(): Collection
+    {
+        return $this->events;
     }
 }

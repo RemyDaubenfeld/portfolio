@@ -1,0 +1,65 @@
+{# Récapitulatif quotidien — styles en ligne pour les clients mail #}
+{% set h2 = 'font-size:15px;margin:22px 0 8px;color:#1a1a1a;' %}
+{% set li = 'margin:0 0 8px;' %}
+{% set muted = 'color:#777;font-size:12px;' %}
+{% set sources = {france_travail: 'France Travail', indeed: 'Indeed', linkedin: 'LinkedIn', hellowork: 'HelloWork', freework: 'Free-Work'} %}
+
+<div lang="fr" style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#1a1a1a;line-height:1.45;max-width:640px;">
+
+    <p style="margin:0 0 4px;">Bonjour,</p>
+    <p style="margin:0 0 4px;">Voici le point du jour sur ta recherche d'emploi.</p>
+
+    {% if followUpsDue is not empty %}
+        <h2 style="{{ h2 }}">🔔 Relances à faire ({{ followUpsDue|length }})</h2>
+        <ul style="padding-left:18px;margin:0;">
+            {% for application in followUpsDue %}
+                <li style="{{ li }}">
+                    <strong>{{ application }}</strong><br>
+                    <span style="{{ muted }}">
+                        Envoyée le {{ application.sentAt|date('d/m/Y') }}
+                        · relance prévue le {{ application.followUpAt|date('d/m/Y') }}
+                        {% if application.followUpCount > 0 %} · {{ application.followUpCount }} relance(s) déjà faite(s){% endif %}
+                        {% if application.company and application.company.contactEmail %} · {{ application.company.contactEmail }}{% endif %}
+                    </span>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if newOffers is not empty %}
+        <h2 style="{{ h2 }}">💼 Nouvelles offres à étudier ({{ newOffers|length }})</h2>
+        <ul style="padding-left:18px;margin:0;">
+            {% for offer in newOffers %}
+                <li style="{{ li }}">
+                    <a href="{{ offer.url }}" style="color:#2563eb;">{{ offer.title }}</a><br>
+                    <span style="{{ muted }}">{{ offer.company ?? 'Entreprise non précisée' }} · {{ offer.location }} · {{ sources[offer.source] ?? offer.source }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if upcomingFollowUps is not empty %}
+        <h2 style="{{ h2 }}">📅 Relances des prochains jours</h2>
+        <ul style="padding-left:18px;margin:0;">
+            {% for application in upcomingFollowUps %}
+                <li style="{{ li }}">{{ application }} <span style="{{ muted }}">— le {{ application.followUpAt|date('d/m/Y') }}</span></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if interviews is not empty %}
+        <h2 style="{{ h2 }}">🤝 Entretiens en cours</h2>
+        <ul style="padding-left:18px;margin:0;">
+            {% for application in interviews %}
+                <li style="{{ li }}">{{ application }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <p style="margin:26px 0 0;">
+        <a href="{{ url('job_search_dashboard') }}"
+           style="display:inline-block;background:#1A1D24;color:#ffffff;text-decoration:none;padding:9px 16px;border-radius:6px;">
+            Ouvrir le tableau de bord
+        </a>
+    </p>
+</div>

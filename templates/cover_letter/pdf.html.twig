@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Lettre de motivation — {{ user.firstName }} {{ user.lastName }}</title>
+    <style>
+        @page { margin: 2.2cm 2.2cm 2cm; }
+        body { font-family: DejaVu Sans, sans-serif; font-size: 10pt; color: #1a1a1a; line-height: 1.5; }
+
+        .header { display: table; width: 100%; margin-bottom: 1.2cm; }
+        .sender, .recipient { display: table-cell; vertical-align: top; width: 50%; }
+        .recipient { text-align: right; }
+        .sender-name { font-size: 12pt; font-weight: bold; }
+        .sender-title { color: #4EC9B0; font-size: 9pt; margin-bottom: 4px; }
+        .muted { color: #555; font-size: 9pt; }
+
+        .date { text-align: right; margin-bottom: 0.8cm; }
+        .subject { font-weight: bold; margin-bottom: 0.6cm; }
+        .subject span { color: #C8A96E; }
+        .body p { margin: 0 0 0.35cm; text-align: justify; }
+        .signature { margin-top: 0.9cm; text-align: right; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="sender">
+            <div class="sender-name">{{ user.firstName }} {{ user.lastName }}</div>
+            <div class="sender-title">{{ user.jobTitle }}</div>
+            <div class="muted">{{ user.location }}</div>
+            {% if user.phone %}<div class="muted">{{ user.phone }}</div>{% endif %}
+            <div class="muted">{{ user.email }}</div>
+            {% if user.websiteUrl %}<div class="muted">{{ user.websiteUrl|replace({'https://': '', 'http://': ''}) }}</div>{% endif %}
+        </div>
+        <div class="recipient">
+            <strong>{{ companyName }}</strong>
+            {% if company and company.address %}
+                <div class="muted">{{ company.address }}</div>
+            {% elseif company and company.city %}
+                <div class="muted">{{ company.city }}</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="date">{{ senderCity }}, le {{ date }}</div>
+
+    <div class="subject"><span>Objet :</span> {{ subject }}</div>
+
+    <div class="body">
+        <p>Madame, Monsieur,</p>
+        {% for paragraph in body|default('')|split("\n\n")|map(p => p|trim)|filter(p => p is not empty) %}
+            <p>{{ paragraph|nl2br }}</p>
+        {% endfor %}
+        <p>Je vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.</p>
+    </div>
+
+    <div class="signature">{{ user.firstName }} {{ user.lastName }}</div>
+</body>
+</html>

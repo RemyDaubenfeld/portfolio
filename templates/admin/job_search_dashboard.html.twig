@@ -9,11 +9,16 @@
 {% set offerCrud = 'App\\Controller\\JobSearch\\JobOfferCrudController' %}
 {% set applicationCrud = 'App\\Controller\\JobSearch\\JobApplicationCrudController' %}
 {% set companyCrud = 'App\\Controller\\JobSearch\\CompanyCrudController' %}
+{% set sources = {france_travail: 'France Travail', indeed: 'Indeed', linkedin: 'LinkedIn', hellowork: 'HelloWork', freework: 'Free-Work'} %}
 
 {% block page_title %}Tableau de bord{% endblock %}
 
+{# Pas de titre affiché sur le tableau de bord : on retire l'en-tête vide d'EasyAdmin qui décale tout vers le bas #}
+{% block content_header_wrapper %}{% endblock %}
+
 {% block main %}
 <style>
+    #main.content-body { padding-top: 1rem; }
     .js-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
     /* Une teinte par groupe de blocs : couleur semi-transparente, lisible en thème clair comme sombre */
     .js-tone-stats { --tone: 59, 130, 246; }   /* bleu : indicateurs */
@@ -114,7 +119,7 @@
                     <tr>
                         <td>
                             <a href="{{ offer.url }}" target="_blank" rel="noopener">{{ offer.title }}</a>
-                            <div class="js-sub">{{ offer.company ?? 'Entreprise non précisée' }} · {{ offer.source }}</div>
+                            <div class="js-sub">{{ offer.company ?? 'Entreprise non précisée' }} · {{ sources[offer.source] ?? offer.source }}</div>
                         </td>
                         <td>{{ offer.location }}</td>
                         <td>
