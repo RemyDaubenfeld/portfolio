@@ -37,18 +37,20 @@ class JobOfferRepository extends ServiceEntityRepository
             ->andWhere('o.createdAt >= :since')
             ->setParameter('status', JobOfferStatus::ToReview)
             ->setParameter('since', $since)
-            ->orderBy('o.createdAt', 'DESC')
+            ->orderBy('o.relevanceScore', 'DESC')
+            ->addOrderBy('o.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
     }
 
-    /** @return JobOffer[] dernières offres à étudier */
+    /** @return JobOffer[] offres à étudier, les plus pertinentes d'abord */
     public function findLatestToReview(int $limit): array
     {
         return $this->createQueryBuilder('o')
             ->where('o.applicationStatus = :status')
             ->setParameter('status', JobOfferStatus::ToReview)
-            ->orderBy('o.createdAt', 'DESC')
+            ->orderBy('o.relevanceScore', 'DESC')
+            ->addOrderBy('o.createdAt', 'DESC')
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();

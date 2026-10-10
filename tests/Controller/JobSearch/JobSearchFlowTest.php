@@ -184,6 +184,20 @@ final class JobSearchFlowTest extends WebTestCase
         self::assertSame(['54', '57'], json_decode($this->client->getResponse()->getContent(), true)['departements']);
     }
 
+    public function testAddingNegativeKeywordInAdminRescoresOffers(): void
+    {
+        $this->em->getConnection()->executeStatement('DELETE FROM negative_keyword');
+        $offer = $this->postOffer('Développeur WinDev', 'ACME', 'Metz (57)');
+        $before = $offer->getRelevanceScore();
+
+        $crawler = $this->client->request('GET', '/job-search/negative-keyword/new');
+        $this->client->submit($crawler->selectButton('Créer')->form(['NegativeKeyword[keyWord]' => 'WinDev', 'NegativeKeyword[active]' => true]));
+        self::assertResponseRedirects();
+
+        $this->em->clear();
+        self::assertSame($before - 30, $this->em->find(JobOffer::class, $offer->getId())->getRelevanceScore());
+    }
+
     public function testActionsRejectGet(): void
     {
         $offer = $this->postOffer('Dev', 'ACME', 'Metz (57)');

@@ -8,6 +8,7 @@ use App\Enum\JobOfferStatus;
 use App\Repository\CompanyRepository;
 use App\Repository\JobApplicationRepository;
 use App\Repository\JobOfferRepository;
+use App\Service\JobSearch\OfferScorer;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -22,11 +23,15 @@ class JobSearchDashboardController extends AbstractDashboardController
         private JobOfferRepository $offerRepository,
         private JobApplicationRepository $applicationRepository,
         private CompanyRepository $companyRepository,
+        private OfferScorer $offerScorer,
     ) {
     }
 
     public function index(): Response
     {
+        // Offres arrivées avant la mise en place de la note : notées au premier affichage
+        $this->offerScorer->scoreMissing();
+
         $applicationStats = $this->applicationRepository->getStats();
         $companyCounts = $this->companyRepository->countByStatus();
 
@@ -72,8 +77,9 @@ class JobSearchDashboardController extends AbstractDashboardController
         yield MenuItem::linkTo(JobApplicationCrudController::class, 'Candidatures', 'fa fa-paper-plane');
         yield MenuItem::linkTo(CompanyCrudController::class, 'Entreprises', 'fa fa-building');
         yield MenuItem::linkTo(CoverLetterTemplateCrudController::class, 'Modèles de lettre', 'fa fa-file-lines');
-        yield MenuItem::section('Configuration n8n');
-        yield MenuItem::linkTo(SearchCriteriaCrudController::class, 'Mots-clés', 'fa fa-tags');
+        yield MenuItem::section('Configuration');
+        yield MenuItem::linkTo(SearchCriteriaCrudController::class, 'Mots-clés de recherche', 'fa fa-tags');
+        yield MenuItem::linkTo(NegativeKeywordCrudController::class, 'Mots-clés à éviter', 'fa fa-ban');
         yield MenuItem::linkTo(RomeCodeCrudController::class, 'Codes ROME', 'fa fa-sitemap');
         yield MenuItem::linkTo(DepartmentCrudController::class, 'Départements', 'fa fa-map-location-dot');
     }

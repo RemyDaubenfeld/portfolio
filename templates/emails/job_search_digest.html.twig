@@ -27,12 +27,12 @@
     {% endif %}
 
     {% if newOffers is not empty %}
-        <h2 style="{{ h2 }}">💼 Nouvelles offres à étudier ({{ newOffers|length }})</h2>
+        <h2 style="{{ h2 }}">💼 Nouvelles offres à étudier ({{ newOffers|length }}, les plus pertinentes d'abord)</h2>
         <ul style="padding-left:18px;margin:0;">
             {% for offer in newOffers %}
                 <li style="{{ li }}">
                     <a href="{{ offer.url }}" style="color:#2563eb;">{{ offer.title }}</a><br>
-                    <span style="{{ muted }}">{{ offer.company ?? 'Entreprise non précisée' }} · {{ offer.location }} · {{ sources[offer.source] ?? offer.source }}</span>
+                    <span style="{{ muted }}">{% if offer.relevanceScore is not null %}<strong style="color:{{ offer.relevanceScore >= 70 ? '#15803d' : (offer.relevanceScore >= 45 ? '#b45309' : '#777') }};">{{ offer.relevanceScore }}/100</strong> · {% endif %}{{ offer.company ?? 'Entreprise non précisée' }} · {{ offer.location }} · {{ sources[offer.source] ?? offer.source }}</span>
                 </li>
             {% endfor %}
         </ul>

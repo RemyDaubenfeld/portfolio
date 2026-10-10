@@ -5,6 +5,7 @@ use App\Entity\JobOffer;
 use App\Enum\JobOfferStatus;
 use App\Repository\JobOfferRepository;
 use App\Service\JobSearch\CompanyMatcher;
+use App\Service\JobSearch\OfferScorer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,6 +20,7 @@ class JobOfferApiController
         EntityManagerInterface $em,
         JobOfferRepository $repository,
         CompanyMatcher $companyMatcher,
+        OfferScorer $offerScorer,
         #[Autowire('%env(JOB_OFFER_API_KEY)%')] string $expectedApiKey,
     ): JsonResponse {
         // --- Authentification simple par clé API ---
@@ -79,10 +81,11 @@ class JobOfferApiController
         }
 
         $companyMatcher->link($offer);
+        $offerScorer->score($offer);
 
         $em->persist($offer);
         $em->flush();
 
-        return new JsonResponse(['status' => 'created', 'id' => $offer->getId()], 201);
+        return new JsonResponse(['status' => 'created', 'id' => $offer->getId(), 'relevanceScore' => $offer->getRelevanceScore()], 201);
     }
 }

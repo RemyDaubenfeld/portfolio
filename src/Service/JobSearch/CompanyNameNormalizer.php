@@ -66,8 +66,8 @@ final class CompanyNameNormalizer
             return 'Luxembourg';
         }
 
-        if (preg_match('/\b(\d{2})(?:\d{3})?\b/', $location, $matches)) {
-            return match ($matches[1]) {
+        if ($department = self::departmentFromLocation($location)) {
+            return match ($department) {
                 '67', '68' => 'Alsace',
                 '54', '55', '57', '88' => 'Lorraine',
                 default => 'Autre',
@@ -77,5 +77,11 @@ final class CompanyNameNormalizer
         $city = self::cityFromLocation($location);
 
         return $city === null ? null : (self::CITY_REGIONS[self::normalize($city)] ?? null);
+    }
+
+    /** Numéro de département ("57 - Metz", "Metz (57)", "57000 Metz" -> "57"), null s'il n'apparaît pas. */
+    public static function departmentFromLocation(?string $location): ?string
+    {
+        return preg_match('/\b(\d{2})(?:\d{3})?\b/', (string) $location, $matches) ? $matches[1] : null;
     }
 }

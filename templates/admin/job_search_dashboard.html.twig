@@ -125,10 +125,11 @@
         {% else %}
             <div class="js-scroll">
             <table class="table table-sm">
-                <thead><tr><th>Offre</th><th>Lieu</th><th></th></tr></thead>
+                <thead><tr><th title="Note de pertinence, détail au survol">Note</th><th>Offre</th><th>Lieu</th><th></th></tr></thead>
                 <tbody>
                 {% for offer in latestOffers %}
                     <tr>
+                        <td>{% include 'admin/job_offer/_relevance_badge.html.twig' with {offer: offer} only %}</td>
                         <td>
                             <a href="{{ offer.url }}" target="_blank" rel="noopener">{{ offer.title }}</a>
                             <div class="js-sub">{{ offer.company ?? 'Entreprise non précisée' }} · {{ sources[offer.source] ?? offer.source }}</div>

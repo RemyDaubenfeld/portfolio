@@ -1,0 +1,10 @@
+{# Note de pertinence d'une offre, détail du calcul au survol. Variable attendue : offer #}
+{% set score = offer.relevanceScore %}
+{% if score is null %}
+    <span class="badge badge-secondary" title="Note pas encore calculée">–</span>
+{% else %}
+    {% set variant = score >= 70 ? 'success' : (score >= 45 ? 'warning' : 'secondary') %}
+    {% set lines = ['Point de départ : ' ~ constant('App\\Service\\JobSearch\\OfferScorer::BASE')]
+        |merge(offer.relevanceDetails|map(d => d.label ~ ' : ' ~ (d.points > 0 ? '+' : '') ~ d.points)) %}
+    <span class="badge badge-{{ variant }}" title="{{ lines|join("\n") }}" style="font-variant-numeric: tabular-nums; cursor: help; min-width: 2.2em;">{{ score }}</span>
+{% endif %}

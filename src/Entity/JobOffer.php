@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Enum\JobOfferStatus;
 use App\Repository\JobOfferRepository;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: JobOfferRepository::class)]
@@ -50,6 +51,14 @@ class JobOffer
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $notes = null;
 
+    /** Note de pertinence de 0 à 100, null tant qu'elle n'a pas été calculée. */
+    #[ORM\Column(nullable: true)]
+    private ?int $relevanceScore = null;
+
+    /** @var list<array{label: string, points: int}>|null détail du calcul de la note */
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $relevanceDetails = null;
+
     #[ORM\Column]
     private \DateTimeImmutable $createdAt;
 
@@ -62,10 +71,15 @@ class JobOffer
         $this->createdAt = new \DateTimeImmutable();
     }
 
+    /** Champs calculés automatiquement : les modifier ne compte pas comme une modification de l'offre. */
+    private const COMPUTED_FIELDS = ['relevanceScore', 'relevanceDetails', 'linkedCompany'];
+
     #[ORM\PreUpdate]
-    public function onPreUpdate(): void
+    public function onPreUpdate(PreUpdateEventArgs $args): void
     {
-        $this->updatedAt = new \DateTimeImmutable();
+        if (array_diff(array_keys($args->getEntityChangeSet()), self::COMPUTED_FIELDS)) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
     }
 
     // --- Getters / Setters ---
@@ -221,6 +235,26 @@ class JobOffer
         $this->createdAt = $createdAt; 
         
         return $this; 
+    }
+
+    public function getRelevanceScore(): ?int
+    {
+        return $this->relevanceScore;
+    }
+
+    /** @return list<array{label: string, points: int}> */
+    public function getRelevanceDetails(): array
+    {
+        return $this->relevanceDetails ?? [];
+    }
+
+    /** @param list<array{label: string, points: int}> $details */
+    public function setRelevance(int $score, array $details): static
+    {
+        $this->relevanceScore = $score;
+        $this->relevanceDetails = $details;
+
+        return $this;
     }
 
     public function getUpdatedAt(): ?\DateTimeImmutable

@@ -16,6 +16,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -80,6 +81,10 @@ class JobOfferCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         yield IdField::new('id')->hideOnForm();
+        yield IntegerField::new('relevanceScore', 'Pertinence')
+            ->hideOnForm()
+            ->setTemplatePath('admin/field/relevance_score.html.twig')
+            ->setHelp('Note de 0 à 100 calculée à partir des mots-clés et du lieu ; détail au survol.');
         yield TextField::new('title', 'Intitulé');
         yield TextField::new('company', 'Entreprise');
         yield AssociationField::new('linkedCompany', 'Fiche entreprise')
