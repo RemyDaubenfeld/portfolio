@@ -1,0 +1,33 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% set crud = 'App\\Controller\\JobSearch\\JobApplicationCrudController' %}
+
+{% block page_title %}Aperçu de l'email{% endblock %}
+
+{% block page_actions %}
+    <a class="btn btn-secondary" href="{{ ea_url().setController(crud).setAction('coverLetter').setEntityId(application.id) }}">
+        <i class="fa fa-arrow-left"></i> Retour à la lettre
+    </a>
+    {% if application.canBeEmailed %}
+        <form method="post" action="{{ ea_url().setController(crud).setAction('sendEmail').setEntityId(application.id) }}" class="d-inline"
+              onsubmit="return window.confirm('Envoyer la candidature à {{ application.company.contactEmail|e('js') }}, avec le CV en pièce jointe ?')">
+            <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane"></i> Envoyer par email</button>
+        </form>
+    {% endif %}
+{% endblock %}
+
+{% block main %}
+<style>
+    .ep-meta { margin-bottom: 1rem; line-height: 1.7; }
+    .ep-frame { width: 100%; min-height: 32rem; border: 1px solid var(--color-border); border-radius: 10px; background: #fff; }
+</style>
+
+<p class="ep-meta">
+    <strong>À :</strong> {{ application.company.contactEmail|default('—') }}<br>
+    <strong>Objet :</strong> {{ subject }}<br>
+    <strong>Pièce jointe :</strong> CV (PDF)
+</p>
+
+{# iframe isolée : les styles de l'admin ne déteignent pas sur le rendu du mail #}
+<iframe class="ep-frame" sandbox srcdoc="{{ html|e('html_attr') }}"></iframe>
+{% endblock %}

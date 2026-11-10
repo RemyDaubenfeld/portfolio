@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Enum\CompanySource;
 use App\Enum\CompanyStatus;
+use App\Enum\JobApplicationStatus;
 use App\Repository\CompanyRepository;
 use App\Service\JobSearch\CompanyNameNormalizer;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -115,6 +116,13 @@ class Company
         if (in_array($this->status, [CompanyStatus::ToQualify, CompanyStatus::ToContact], true)) {
             $this->status = CompanyStatus::Contacted;
         }
+    }
+
+    /** Une candidature en brouillon ou en attente de réponse : inutile d'en préparer une autre. */
+    public function hasOpenApplication(): bool
+    {
+        return $this->applications->exists(fn ($key, JobApplication $application) => $application->getStatus() === JobApplicationStatus::Draft
+            || $application->getStatus()->isAwaitingResponse());
     }
 
     // --- Getters / Setters ---

@@ -12,7 +12,16 @@
     </a>
     {% if application.coverLetter %}
         <a class="btn btn-secondary" href="{{ pdfUrl }}" target="_blank" rel="noopener"><i class="fa fa-eye"></i> Aperçu PDF</a>
-        <a class="btn btn-primary" href="{{ pdfUrl ~ (pdfUrl matches '/\\?/' ? '&' : '?') ~ 'download=1' }}"><i class="fa fa-download"></i> Télécharger le PDF</a>
+        <a class="btn btn-secondary" href="{{ pdfUrl ~ (pdfUrl matches '/\\?/' ? '&' : '?') ~ 'download=1' }}"><i class="fa fa-download"></i> Télécharger le PDF</a>
+        {% if application.company and application.company.contactEmail %}
+            <a class="btn btn-secondary" href="{{ ea_url().setController(crud).setAction('emailPreview').setEntityId(application.id) }}"><i class="fa fa-envelope-open-text"></i> Aperçu de l'email</a>
+        {% endif %}
+    {% endif %}
+    {% if application.canBeEmailed %}
+        <form method="post" action="{{ ea_url().setController(crud).setAction('sendEmail').setEntityId(application.id) }}" class="d-inline"
+              onsubmit="return window.confirm('Envoyer la candidature à {{ application.company.contactEmail|e('js') }}, avec le CV en pièce jointe ?')">
+            <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane"></i> Envoyer par email</button>
+        </form>
     {% endif %}
 {% endblock %}
 
@@ -29,7 +38,14 @@
 
 <p class="cl-meta">
     <strong>{{ application }}</strong><br>
-    Objet : {{ subject }}
+    Objet : {{ subject }}<br>
+    {% if application.company and application.company.contactEmail %}
+        Destinataire : {{ application.company.contactEmail }}
+    {% elseif application.company %}
+        <i class="fa fa-triangle-exclamation"></i> Pas d'email de contact pour cette entreprise :
+        téléchargez le PDF{% if application.company.applicationUrl %} pour <a href="{{ application.company.applicationUrl }}" target="_blank" rel="noopener">postuler sur leur site</a>{% endif %},
+        ou <a href="{{ ea_url().setController('App\\Controller\\JobSearch\\CompanyCrudController').setAction('edit').setEntityId(application.company.id) }}">ajoutez un email</a>.
+    {% endif %}
 </p>
 
 <div class="cl-box">

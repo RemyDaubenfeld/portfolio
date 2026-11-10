@@ -1,0 +1,25 @@
+{# Candidature envoyée par email — styles en ligne pour les clients mail #}
+{% set muted = 'color:#666;font-size:13px;' %}
+
+<div lang="fr" style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#1a1a1a;line-height:1.5;max-width:640px;">
+
+    <p style="margin:0 0 12px;">Madame, Monsieur,</p>
+
+    {% for paragraph in paragraphs %}
+        <p style="margin:0 0 12px;">{{ paragraph|nl2br }}</p>
+    {% endfor %}
+
+    <p style="margin:0 0 20px;">Je vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.</p>
+
+    {% if user %}
+        <p style="margin:0;">
+            <strong>{{ user.firstName }} {{ user.lastName }}</strong>
+            {% if user.jobTitle %}<br><span style="{{ muted }}">{{ user.jobTitle }}</span>{% endif %}
+            {% if user.phone %}<br><span style="{{ muted }}">{{ user.phone }}</span>{% endif %}
+            {% if user.email %}<br><a href="mailto:{{ user.email }}" style="{{ muted }}">{{ user.email }}</a>{% endif %}
+            {% if user.websiteUrl %}<br><a href="{{ user.websiteUrl }}" style="{{ muted }}">{{ user.websiteUrl|replace({'https://': '', 'http://': ''}) }}</a>{% endif %}
+        </p>
+    {% endif %}
+
+    <p style="margin:16px 0 0;{{ muted }}">Pièce jointe : CV</p>
+</div>

@@ -1,0 +1,23 @@
+{% autoescape false %}
+Madame, Monsieur,
+
+{% for paragraph in paragraphs %}
+{{ paragraph }}
+
+{% endfor %}
+Je vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.
+
+{% if user %}
+{{ user.firstName }} {{ user.lastName }}
+{% if user.jobTitle %}{{ user.jobTitle }}
+{% endif %}
+{% if user.phone %}{{ user.phone }}
+{% endif %}
+{% if user.email %}{{ user.email }}
+{% endif %}
+{% if user.websiteUrl %}{{ user.websiteUrl }}
+{% endif %}
+{% endif %}
+
+Pièce jointe : CV
+{% endautoescape %}

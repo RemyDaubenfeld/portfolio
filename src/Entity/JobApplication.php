@@ -159,6 +159,28 @@ class JobApplication
         $this->addEvent(JobApplicationEventType::FollowedUp, $this->status, $now, sprintf('Relance n°%d', $this->followUpCount));
     }
 
+    /**
+     * Passage d'un brouillon à "envoyée". Les dates sont renseignées ici plutôt qu'au PreUpdate,
+     * où Doctrine ne prend pas en compte les champs modifiés hors du changeset.
+     */
+    public function markAsSent(): static
+    {
+        $this->setStatus(JobApplicationStatus::Sent);
+        $this->sentAt ??= new \DateTimeImmutable();
+        $this->followUpAt ??= $this->sentAt->modify(self::FOLLOW_UP_DELAY);
+        $this->company?->markAsContacted();
+
+        return $this;
+    }
+
+    /** Brouillon avec une lettre rédigée et une entreprise joignable par email. */
+    public function canBeEmailed(): bool
+    {
+        return $this->status === JobApplicationStatus::Draft
+            && trim((string) $this->coverLetter) !== ''
+            && trim((string) $this->company?->getContactEmail()) !== '';
+    }
+
     public function isFollowUpDue(): bool
     {
         return $this->status->isAwaitingResponse()

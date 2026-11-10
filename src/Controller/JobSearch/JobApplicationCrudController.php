@@ -4,6 +4,8 @@ namespace App\Controller\JobSearch;
 
 use App\Entity\JobApplication;
 use App\Repository\CoverLetterTemplateRepository;
+use App\Repository\JobApplicationRepository;
+use App\Service\JobSearch\ApplicationMailer;
 use App\Service\JobSearch\CoverLetterGenerator;
 use App\Enum\JobApplicationStatus;
 use App\Enum\JobApplicationType;
@@ -15,6 +17,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\BatchActionDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
@@ -27,6 +30,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 class JobApplicationCrudController extends AbstractCrudController
 {
@@ -64,14 +69,35 @@ class JobApplicationCrudController extends AbstractCrudController
         $coverLetter = Action::new('coverLetter', 'Lettre de motivation', 'fa fa-file-lines')
             ->linkToCrudAction('coverLetter');
 
+        $sendEmail = Action::new('sendEmail', 'Envoyer par email', 'fa fa-envelope')
+            ->linkToCrudAction('sendEmail')
+            ->renderAsForm()
+            ->asSuccessAction()
+            ->askConfirmation('Envoyer cette candidature par email, avec le CV en pièce jointe ?', 'Envoyer')
+            ->displayIf(fn (JobApplication $application) => $application->canBeEmailed());
+
+        $markAsSent = Action::new('markAsSent', 'Marquer comme envoyée', 'fa fa-check')
+            ->linkToCrudAction('markAsSent')
+            ->renderAsForm()
+            ->displayIf(fn (JobApplication $application) => $application->getStatus() === JobApplicationStatus::Draft);
+
+        $sendEmails = Action::new('sendEmails', 'Envoyer par email', 'fa fa-envelope')
+            ->linkToCrudAction('sendEmails')
+            ->addCssClass('btn btn-success');
+
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->add(Crud::PAGE_INDEX, $sendEmail)
+            ->add(Crud::PAGE_INDEX, $markAsSent)
             ->add(Crud::PAGE_INDEX, $followUp)
             ->add(Crud::PAGE_INDEX, $noResponse)
             ->add(Crud::PAGE_INDEX, $coverLetter)
+            ->add(Crud::PAGE_DETAIL, $sendEmail)
+            ->add(Crud::PAGE_DETAIL, $markAsSent)
             ->add(Crud::PAGE_DETAIL, $followUp)
             ->add(Crud::PAGE_DETAIL, $noResponse)
-            ->add(Crud::PAGE_DETAIL, $coverLetter);
+            ->add(Crud::PAGE_DETAIL, $coverLetter)
+            ->addBatchAction($sendEmails);
     }
 
     public function configureFilters(Filters $filters): Filters
@@ -158,6 +184,129 @@ class JobApplicationCrudController extends AbstractCrudController
             'subject' => $generator->subject($application),
             'templates' => $templateRepository->findBy([], ['name' => 'ASC']),
         ]);
+    }
+
+    /** Aperçu du mail tel qu'il sera envoyé à l'entreprise. */
+    #[AdminRoute('/{entityId}/email-preview', name: 'email_preview', options: ['methods' => ['GET']])]
+    public function emailPreview(AdminContext $context, ApplicationMailer $mailer): Response
+    {
+        /** @var JobApplication $application */
+        $application = $context->getEntity()->getInstance();
+
+        return $this->render('admin/job_application/email_preview.html.twig', [
+            'application' => $application,
+            'subject' => $mailer->subject($application),
+            'html' => $mailer->renderHtml($application),
+        ]);
+    }
+
+    #[AdminRoute('/{entityId}/send-email', name: 'send_email', options: ['methods' => ['POST']])]
+    public function sendEmail(AdminContext $context, EntityManagerInterface $em, ApplicationMailer $mailer): Response
+    {
+        /** @var JobApplication $application */
+        $application = $context->getEntity()->getInstance();
+
+        if (!$application->canBeEmailed()) {
+            $this->addFlash('warning', sprintf('Candidature %s non envoyée : %s.', $application, $this->cannotEmailReason($application)));
+
+            return $this->redirectBack($context);
+        }
+
+        try {
+            $mailer->send($application);
+            $em->flush();
+        } catch (TransportExceptionInterface $e) {
+            $this->addFlash('danger', sprintf('Échec de l\'envoi à %s : %s', $application->getCompany()->getContactEmail(), $e->getMessage()));
+
+            return $this->redirectBack($context);
+        }
+
+        $this->addFlash('success', sprintf(
+            'Candidature envoyée à %s (%s). Relance prévue le %s.',
+            $application,
+            $application->getCompany()->getContactEmail(),
+            $application->getFollowUpAt()->format('d/m/Y'),
+        ));
+
+        return $this->redirectBack($context);
+    }
+
+    /** Envoi groupé des brouillons cochés : ceux qui ne sont pas prêts sont ignorés et listés. */
+    #[AdminRoute('/send-emails', name: 'send_emails', options: ['methods' => ['POST']])]
+    public function sendEmails(
+        AdminContext $context,
+        BatchActionDto $batchActionDto,
+        EntityManagerInterface $em,
+        JobApplicationRepository $repository,
+        ApplicationMailer $mailer,
+    ): Response {
+        if (!$this->isCsrfTokenValid('ea-batch-action-sendEmails-'.JobApplication::class, $batchActionDto->getCsrfToken())) {
+            throw $this->createAccessDeniedException('Jeton CSRF invalide.');
+        }
+        if ($batchActionDto->getEntityFqcn() !== $context->getEntity()->getFqcn()) {
+            throw new BadRequestHttpException();
+        }
+
+        $sent = 0;
+        $skipped = [];
+        $failed = [];
+        foreach ($repository->findBy(['id' => $batchActionDto->getEntityIds()]) as $application) {
+            if (!$application->canBeEmailed()) {
+                $skipped[] = sprintf('%s (%s)', $application, $this->cannotEmailReason($application));
+                continue;
+            }
+
+            try {
+                $mailer->send($application);
+                // Flush à chaque envoi : une erreur plus loin ne doit pas faire oublier ceux déjà partis
+                $em->flush();
+                $sent++;
+            } catch (TransportExceptionInterface $e) {
+                $failed[] = sprintf('%s (%s)', $application, $e->getMessage());
+            }
+        }
+
+        if ($sent) {
+            $this->addFlash('success', sprintf('%d candidature(s) envoyée(s) par email.', $sent));
+        }
+        if ($skipped) {
+            $this->addFlash('warning', 'Ignorée(s) : '.implode(', ', $skipped).'.');
+        }
+        if ($failed) {
+            $this->addFlash('danger', 'Échec d\'envoi : '.implode(', ', $failed).'.');
+        }
+
+        return $this->redirectBack($context);
+    }
+
+    /** Candidature déposée hors email (formulaire sur le site de l'entreprise...). */
+    #[AdminRoute('/{entityId}/mark-as-sent', name: 'mark_as_sent', options: ['methods' => ['POST']])]
+    public function markAsSent(AdminContext $context, EntityManagerInterface $em): Response
+    {
+        /** @var JobApplication $application */
+        $application = $context->getEntity()->getInstance();
+        if ($application->getStatus() !== JobApplicationStatus::Draft) {
+            return $this->redirectBack($context);
+        }
+        $application->markAsSent();
+        $em->flush();
+
+        $this->addFlash('success', sprintf(
+            'Candidature %s marquée comme envoyée. Relance prévue le %s.',
+            $application,
+            $application->getFollowUpAt()->format('d/m/Y'),
+        ));
+
+        return $this->redirectBack($context);
+    }
+
+    private function cannotEmailReason(JobApplication $application): string
+    {
+        return match (true) {
+            $application->getStatus() !== JobApplicationStatus::Draft => 'déjà envoyée',
+            trim((string) $application->getCompany()?->getContactEmail()) === '' => 'pas d\'email de contact',
+            default => 'lettre vide',
+        };
     }
 
     #[AdminRoute('/{entityId}/cover-letter.pdf', name: 'cover_letter_pdf', options: ['methods' => ['GET']])]

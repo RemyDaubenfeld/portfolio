@@ -1,0 +1,71 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% set crud = 'App\\Controller\\JobSearch\\CompanyCrudController' %}
+{% set templateCrud = 'App\\Controller\\JobSearch\\CoverLetterTemplateCrudController' %}
+
+{% block page_title %}Préparer {{ companies|length > 1 ? companies|length ~ ' candidatures spontanées' : 'une candidature spontanée' }}{% endblock %}
+
+{% block page_actions %}
+    <a class="btn btn-secondary" href="{{ ea_url().setController(crud).setAction('index') }}">
+        <i class="fa fa-arrow-left"></i> Retour aux entreprises
+    </a>
+{% endblock %}
+
+{% block main %}
+<style>
+    .pa-box { border: 1px solid var(--color-border); border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
+    .pa-list { list-style: none; padding: 0; margin: 0; }
+    .pa-list li { padding: .45rem 0; border-bottom: 1px solid var(--color-border); }
+    .pa-list li:last-child { border-bottom: 0; }
+    .pa-muted { font-size: .85rem; opacity: .7; }
+    .pa-form { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+    .pa-form select { max-width: 320px; }
+</style>
+
+{% set ready = companies|filter(c => not c.hasOpenApplication) %}
+
+<div class="pa-box">
+    <ul class="pa-list">
+        {% for company in companies %}
+            <li>
+                <strong>{{ company.name }}</strong>{% if company.city %} <span class="pa-muted">· {{ company.city }}</span>{% endif %}<br>
+                {% if company.hasOpenApplication %}
+                    <span class="badge badge-warning">Candidature déjà en cours : ignorée</span>
+                {% elseif company.contactEmail %}
+                    <span class="pa-muted"><i class="fa fa-envelope"></i> Envoi par email à {{ company.contactEmail }}</span>
+                {% else %}
+                    <span class="pa-muted"><i class="fa fa-triangle-exclamation"></i> Pas d'email de contact : lettre à télécharger en PDF
+                        {%- if company.applicationUrl %} pour <a href="{{ company.applicationUrl }}" target="_blank" rel="noopener">postuler sur leur site</a>{% endif %},
+                        ou <a href="{{ ea_url().setController(crud).setAction('edit').setEntityId(company.id) }}">ajouter un email</a>.</span>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="pa-box">
+    {% if templates is empty %}
+        <span>Aucun modèle de lettre.</span>
+        <a href="{{ ea_url().setController(templateCrud).setAction('new') }}">Créer un modèle →</a>
+    {% elseif ready is empty %}
+        <span>Aucune entreprise à préparer.</span>
+    {% else %}
+        <form method="post" action="{{ ea_url().setController(crud).setAction('createApplications') }}" class="pa-form">
+            <input type="hidden" name="_token" value="{{ csrf_token('prepare_applications') }}">
+            {% for company in ready %}
+                <input type="hidden" name="ids[]" value="{{ company.id }}">
+            {% endfor %}
+            <label for="template" class="mb-0">Modèle de lettre</label>
+            <select id="template" name="template" class="form-select form-select-sm">
+                {% for template in templates %}
+                    <option value="{{ template.id }}">{{ template.name }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-sm btn-primary">
+                <i class="fa fa-file-pen"></i> Créer {{ ready|length > 1 ? ready|length ~ ' brouillons' : 'le brouillon' }}
+            </button>
+            <span class="pa-muted">Les lettres pourront être relues et ajustées avant l'envoi.</span>
+        </form>
+    {% endif %}
+</div>
+{% endblock %}
